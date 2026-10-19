@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#090b0d">
+<title>PDM Motorsport / Media 2027</title>
+<meta name="description" content="A limited roster. A more complete approach. PDM looks after every side of a driver's media for the 2027 season.">
+
+<!-- If GSAP fails to load, the page stays fully readable: the "js" class is removed on window load -->
+<script>
+  document.documentElement.classList.add('js');
+  window.addEventListener('load', function () {
+    if (!window.gsap || !window.ScrollTrigger) document.documentElement.classList.remove('js');
+  });
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Page loader (only exists visually when JS runs; see .js .loader in CSS) -->
+<div class="loader" data-loader aria-hidden="true">
+  <div class="loader__in">
+    <span class="label loader__l">PDM Motorsport / Media</span>
+    <span class="loader__n d"><span data-loader-count>0</span><small>%</small></span>
+    <span class="label loader__r">2027</span>
+  </div>
+</div>
+<div class="cursor" data-cursor-el aria-hidden="true"><span class="cursor__t"></span></div>
+
+<!-- ============================== HEADER ============================== -->
+<header class="header" id="header">
+  <a class="logo" href="#top" aria-label="PDM Motorsport / Media, back to top" data-glitch>
+    <img class="logo__base" src="assets/pdm-logo.png" alt="PDM Motorsport / Media" width="937" height="227">
+    <span class="logo__ch logo__ch--r" aria-hidden="true"></span>
+    <span class="logo__ch logo__ch--c" aria-hidden="true"></span>
+  </a>
+  <nav class="nav" id="nav" aria-label="Main">
+    <a href="#approach">The approach</a>
+    <a href="#media">Our media</a>
+    <a href="#programmes">Programmes</a>
+    <a href="#kit">Team kit</a>
+    <a class="btn btn--ghost nav__cta" href="#contact" data-magnetic>Enquire for 2027 <span class="arr" aria-hidden="true">↗</span></a>
+  </nav>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="nav" aria-label="Open menu"><i></i><i></i></button>
+</header>
+
+<main id="main">
+
+<!-- ============================== 00 HERO (Option 3 layout) ============================== -->
+<section class="hero" id="top" data-section="hero" aria-label="PDM 2027">
+  <div class="mq mq--a d" aria-hidden="true"><div class="mq__in" data-speed="38"><span>Your season</span><i>✦</i><span>Covered</span><i>✦</i></div></div>
+  <div class="mq mq--b d" aria-hidden="true"><div class="mq__in" data-speed="46" data-dir="-1"><span>PDM 2027</span><i>✦</i><span>Motorsport / Media</span><i>✦</i></div></div>
+  <div class="lines" aria-hidden="true"></div>
+
+  <p class="label hero__eyebrow"><span class="sq"></span>PDM 2027 / A new direction</p>
+
+  <div class="hero__cards" id="heroCards">
+    <figure class="card" data-cursor="View" data-depth="14" data-cap="The focus / Race day"><img src="assets/img/drv1.jpg" width="676" height="1008" alt="Orange Formula car on the pit lane beside a number 1 board" fetchpriority="high"></figure>
+    <figure class="card" data-cursor="View" data-depth="28" data-cap="The preparation / Behind the scenes"><img src="assets/img/drv2.jpg" width="676" height="1008" alt="Driver in a green helmet climbing out of a pink car" fetchpriority="high"></figure>
+    <figure class="card" data-cursor="View" data-depth="10" data-cap="The lap / On track"><img src="assets/img/drv3.jpg" width="676" height="1008" alt="Red and white Formula car cornering"></figure>
+    <figure class="card" data-cursor="View" data-depth="32" data-cap="The feeling / Beyond the result"><img src="assets/img/drv4.jpg" width="676" height="1008" alt="Driver in an orange race suit with arms wide open"></figure>
+    <figure class="card" data-cursor="View" data-depth="18" data-cap="The podium / Team moment"><img src="assets/img/drv5.jpg" width="676" height="1008" alt="Driver in a white suit kneeling beside a number 1 board"></figure>
+  </div>
+
+  <div class="hero__title">
+    <h1 class="d" data-split="words" data-trigger="load">Your season.<br>Covered.</h1>
+  </div>
+  <div class="hero__side">
+    <p class="hero__sub" data-hero-fade>One team. Every side of your media. From the first lap to life beyond the circuit.</p>
+    <a class="btn btn--solid" href="#programmes" data-hero-fade data-magnetic>Discover Signature <span class="arr" aria-hidden="true">↗</span></a>
+  </div>
+  <p class="label hero__cap" id="heroCap" aria-live="polite">Racing. Social. Lifestyle. Brand.</p>
+  <p class="label hero__scroll"><span class="arr" aria-hidden="true">↓</span> Scroll to explore / 2027</p>
+</section>
+
+<!-- ============================== 01 APPROACH / STATEMENT (light, scrubbed words + floating images) ============================== -->
+<section class="sec sec--light statement" id="approach" data-section="approach">
+  <div class="wrap">
+    <p class="label sec__label" data-reveal="fade"><b>01 /</b> The approach / A new era</p>
+    <div class="rule" data-reveal="line"></div>
+  </div>
+  <div class="statement__stage">
+    <figure class="st__img st__img--l" data-float="-1" data-reveal="clip"><div class="pimg"><img src="assets/img/drv1.jpg" width="676" height="1008" alt="Orange Formula car on race day" loading="lazy"></div></figure>
+    <p class="d statement__t" data-split="words" data-scrub>Not just at the circuit. <em>Part of your year.</em> A limited roster. <em>A more complete approach.</em> One team for <em>every side</em> of your media.</p>
+    <figure class="st__img st__img--r" data-float="1" data-reveal="clip"><div class="pimg"><img src="assets/img/drv5.jpg" width="676" height="1008" alt="Driver in a white race suit kneeling beside a number 1 board" loading="lazy"></div></figure>
+  </div>
+</section>
+
+<!-- ============================== 02 TEAM (dark) ============================== -->
+<section class="sec sec--dark" id="team" data-section="team">
+  <div class="wrap">
+    <p class="label sec__label" data-reveal="fade"><b>02 /</b> The team / More than a client</p>
+    <div class="rule" data-reveal="line"></div>
+    <div class="split split--head">
+      <h2 class="d h2" data-split="words">More than<br>a client.</h2>
+      <p class="lead lead--dim" data-split="lines">A deliberately small roster makes room for real relationships.</p>
+    </div>
+    <div class="trio">
+      <figure class="trio__a" data-speed="0.12" data-reveal="clip"><div class="pimg"><img src="assets/img/drv2.jpg" width="676" height="1008" alt="Driver in a green helmet preparing in the pit lane" loading="lazy"></div><figcaption class="label">The preparation / Behind the scenes</figcaption></figure>
+      <figure class="trio__b" data-speed="0.3" data-reveal="clip"><div class="pimg"><img src="assets/img/drv1.jpg" width="676" height="1008" alt="Orange Formula car on race day" loading="lazy"></div><figcaption class="label">The focus / Race day</figcaption></figure>
+      <figure class="trio__c" data-speed="0.18" data-reveal="clip"><div class="pimg"><img src="assets/img/drv4.jpg" width="676" height="1008" alt="Driver celebrating in an orange race suit" loading="lazy"></div><figcaption class="label">The feeling / Beyond the result</figcaption></figure>
+    </div>
+    <div class="bar">
+      <p class="bar__t" data-split="words">Different drivers. Different championships. One PDM team.</p>
+      <span class="bar__l" data-reveal="line"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 03 MEDIA (light) ============================== -->
+<section class="sec sec--light" id="media" data-section="media">
+  <div class="wrap">
+    <p class="label sec__label" data-reveal="fade"><b>03 /</b> Our media / Four connected areas</p>
+    <div class="rule" data-reveal="line"></div>
+    <div class="split split--head">
+      <h2 class="d h2" data-split="words">One team.<br>Every side of<br>your media.</h2>
+      <p class="lead lead--dim" data-split="lines">Your brand doesn’t stop at the chequered flag. Racing, social, lifestyle and brand under one creative direction.</p>
+    </div>
+    <ol class="agenda" data-stagger>
+      <li class="ag" data-reveal="up" data-cursor="Look" data-ag="0">
+        <span class="ag__n label">01</span>
+        <h3 class="d ag__t"><span>Motorsport</span></h3>
+        <ul class="ag__l"><li>Race-weekend photography</li><li>Short-form video</li><li>Season storytelling</li></ul>
+        <span class="ag__ar arr" aria-hidden="true">↗</span>
+        <img class="ag__thumb" src="assets/img/med-motorsport.jpg" alt="Formula car leaving the pit exit" loading="lazy" width="472" height="655">
+      </li>
+      <li class="ag" data-reveal="up" data-cursor="Look" data-ag="1">
+        <span class="ag__n label">02</span>
+        <h3 class="d ag__t"><span>Social</span></h3>
+        <ul class="ag__l"><li>Content planning</li><li>Posting &amp; captions</li><li>Analytics reports</li></ul>
+        <span class="ag__ar arr" aria-hidden="true">↗</span>
+        <img class="ag__thumb" src="assets/img/med-social.jpg" alt="Illustrated social graphic of a driver in a helmet" loading="lazy" width="472" height="655">
+      </li>
+      <li class="ag" data-reveal="up" data-cursor="Look" data-ag="2">
+        <span class="ag__n label">03</span>
+        <h3 class="d ag__t"><span>Lifestyle</span></h3>
+        <ul class="ag__l"><li>Training &amp; travel</li><li>Padel, karting &amp; golf</li><li>Day-in-the-life content</li></ul>
+        <span class="ag__ar arr" aria-hidden="true">↗</span>
+        <img class="ag__thumb" src="assets/img/med-lifestyle.jpg" alt="Driver taking a golf shot on a green" loading="lazy" width="472" height="655">
+      </li>
+      <li class="ag" data-reveal="up" data-cursor="Look" data-ag="3">
+        <span class="ag__n label">04</span>
+        <h3 class="d ag__t"><span>Brand</span></h3>
+        <ul class="ag__l"><li>Personal brand direction</li><li>Creative concepts</li><li>Season identity</li></ul>
+        <span class="ag__ar arr" aria-hidden="true">↗</span>
+        <img class="ag__thumb" src="assets/img/med-brand.jpg" alt="Black and white shot of two people in a garage" loading="lazy" width="472" height="655">
+      </li>
+    </ol>
+    <div class="ag__pv" aria-hidden="true"><img src="assets/img/med-motorsport.jpg" alt="" width="472" height="655"><img src="assets/img/med-social.jpg" alt="" width="472" height="655"><img src="assets/img/med-lifestyle.jpg" alt="" width="472" height="655"><img src="assets/img/med-brand.jpg" alt="" width="472" height="655"></div>
+  </div>
+  </div>
+</section>
+
+<!-- ============================== 04 BANNER (dark, pinned) ============================== -->
+<section class="banner" id="banner" data-section="banner" aria-label="Every lap. Everything around it.">
+  <div class="banner__stage">
+    <div class="banner__p banner__p--l"><img src="assets/img/drv3.jpg" width="676" height="1008" alt="Red Formula car on track" loading="lazy"></div>
+    <div class="banner__p banner__p--r"><img src="assets/img/drv4.jpg" width="676" height="1008" alt="Driver in an orange race suit with arms wide" loading="lazy"></div>
+    <div class="banner__shade"></div>
+    <p class="label banner__tl">04 / Every story is more than the result</p>
+    <p class="label banner__br">PDM / On &amp; off track</p>
+    <div class="banner__txt">
+      <h2 class="d" data-split="words" data-trigger="manual">Every lap.<br>Everything around it.</h2>
+      <p class="banner__sub" data-banner-sub>The focus. The people. The moments that make a season yours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== 05 PROGRAMMES (dark) ============================== -->
+<section class="sec sec--dark sec--pad" id="programmes" data-section="programmes">
+  <div class="wrap">
+    <p class="label sec__label" data-reveal="fade"><b>05 /</b> Ways to work with PDM</p>
+    <div class="rule" data-reveal="line"></div>
+    <h2 class="d h2 h2--wide" data-split="words">Two ways.<br>One PDM standard.</h2>
+    <div class="ways">
+      <article class="way" data-reveal="left">
+        <header class="way__h"><span class="label">Event coverage / Selected rounds</span><span class="label">A</span></header>
+        <h3 class="d">Race Weekend</h3>
+        <p class="way__tag">Be covered by PDM.</p>
+        <p class="way__p">Photography and short-form video at selected rounds, championships and events.</p>
+        <dl>
+          <div><dt class="label">Relationship</dt><dd>Individual race weekends</dd></div>
+          <div><dt class="label">Coverage</dt><dd>Race-weekend photography &amp; short-form video</dd></div>
+        </dl>
+        <a class="btn btn--ghost" href="#contact" data-pick="Race Weekend" data-magnetic>Enquire about a race weekend <span class="arr" aria-hidden="true">↗</span></a>
+      </article>
+      <article class="way way--sig" data-reveal="right">
+        <header class="way__h"><span class="label label--c">Flagship / 2027 driver programme</span><span class="label">B</span></header>
+        <h3 class="d">Signature</h3>
+        <p class="way__tag way__tag--c">Become part of PDM.</p>
+        <p class="way__p">A season-long relationship across motorsport, social, lifestyle and brand, for a deliberately limited roster.</p>
+        <dl>
+          <div><dt class="label">Relationship</dt><dd>A season-long partnership</dd></div>
+          <div><dt class="label">Coverage</dt><dd>All four media areas, with ongoing creative support</dd></div>
+          <div><dt class="label">Team identity</dt><dd>Full PDM 2027 team kit included</dd></div>
+        </dl>
+        <a class="btn btn--solid" href="#contact" data-pick="Signature" data-magnetic>Explore your season with PDM <span class="arr" aria-hidden="true">↗</span></a>
+      </article>
+    </div>
+    <p class="note" data-reveal="fade"><span class="sq"></span>Looking for something different? Bespoke season agreements are available for selected drivers.</p>
+  </div>
+</section>
+
+<!-- ============================== 06 SIGNATURE NUMBERS (light) ============================== -->
+<section class="sec sec--light" id="signature" data-section="signature">
+  <div class="wrap">
+    <p class="label sec__label" data-reveal="fade"><b>06 /</b> Signature / Your season, covered</p>
+    <div class="rule" data-reveal="line"></div>
+    <div class="split split--head">
+      <h2 class="d h2" data-split="words">A whole season.<br>Not just weekends.</h2>
+      <p class="lead lead--dim" data-split="lines">One consistent direction across racing, social, lifestyle and brand.</p>
+    </div>
+    <div class="ex" data-reveal="up"><span class="label label--c">Typical example</span><b>Tailored. Not fixed.</b></div>
+    <div class="stats" data-stagger>
+      <article class="stat" data-reveal="up"><div class="stat__n d"><span data-count="10" aria-label="10"><span aria-hidden="true">10</span></span>*</div><div><h3 class="d">Race weekends</h3><ul><li>Photography at every event</li><li>Minimum 3 short-form videos per event</li><li>Fast turnaround</li></ul></div></article>
+      <article class="stat" data-reveal="up"><div class="stat__n d"><span data-count="12" aria-label="12"><span aria-hidden="true">12</span></span></div><div><h3 class="d">Months of social</h3><ul><li>Account management &amp; planning</li><li>Graphics &amp; analytics reports</li></ul></div></article>
+      <article class="stat" data-reveal="up"><div class="stat__n d"><span data-count="5" aria-label="5"><span aria-hidden="true">5</span></span></div><div><h3 class="d">Lifestyle days</h3><ul><li>Training, padel, karting or golf</li><li>Content built around your life</li></ul></div></article>
+      <article class="stat" data-reveal="up"><div class="stat__n stat__n--w d">Brand</div><div><h3 class="d">A season identity</h3><ul><li>Personal brand direction</li><li>Creative concepts &amp; visual consistency</li></ul></div></article>
+    </div>
+    <p class="fine" data-reveal="fade">*10 race weekends is a typical example, not a fixed commitment.</p>
+  </div>
+</section>
+
+<!-- ============================== 07 ALWAYS (dark split) ============================== -->
+<section class="always" id="always" data-section="always">
+  <div class="always__l wrap">
+    <p class="label sec__label" data-reveal="fade"><b>07 /</b> Always part of your season</p>
+    <div class="rule" data-reveal="line"></div>
+    <h2 class="d h2" data-split="words">PDM doesn’t<br>disappear between<br>race weekends.</h2>
+    <ul class="always__list" data-stagger>
+      <li data-reveal="up">A team you can message with an idea.</li>
+      <li data-reveal="up">A direction that stays consistent.</li>
+      <li data-reveal="up">A relationship beyond the race weekend.</li>
+    </ul>
+  </div>
+  <div class="always__r" data-reveal="clip"><div class="pimg"><img src="assets/img/always.jpg" width="884" height="1037" alt="Black and white shot of two people talking in a garage" loading="lazy"></div></div>
+</section>
+
+<!-- ============================== 08 TEAM KIT (light) ============================== -->
+<section class="sec sec--light" id="kit" data-section="kit">
+  <div class="wrap">
+    <p class="label sec__label" data-reveal="fade"><b>08 /</b> The identity / PDM 2027 team kit</p>
+    <div class="rule" data-reveal="line"></div>
+    <div class="split split--head">
+      <h2 class="d h2" data-split="words">The same team.<br>The same identity.</h2>
+      <p class="lead lead--dim" data-split="lines">Every Signature driver receives the full PDM 2027 team kit.</p>
+    </div>
+    <div class="kit">
+      <figure class="kit__a" data-reveal="clip"><div class="pimg"><img src="assets/img/kit-1.jpg" width="958" height="771" alt="White PDM track jacket seen from the front and back" loading="lazy"></div><figcaption class="label">01 / Track wear &amp; performance wear</figcaption></figure>
+      <figure class="kit__b" data-reveal="clip"><div class="pimg"><img src="assets/img/kit-2.jpg" width="976" height="370" alt="Black and white PDM t-shirts with city coordinates" loading="lazy"></div></figure>
+      <figure class="kit__c" data-reveal="clip"><div class="pimg"><img src="assets/img/kit-3.jpg" width="976" height="370" alt="Black PDM polo shirts with blue details" loading="lazy"></div><figcaption class="label">02 / Lifestyle pieces &amp; city series</figcaption></figure>
+    </div>
+  </div>
+  <div class="tags" aria-label="Kit range"><div class="tags__in" data-speed="34"><span>Track wear</span><i>✦</i><span>Performance wear</span><i>✦</i><span>Lifestyle pieces</span><i>✦</i><span>Hoodies</span><i>✦</i><span>City Series</span><i>✦</i></div></div>
+</section>
+
+<!-- ============================== 09 CONTACT (dark) ============================== -->
+<section class="sec sec--dark sec--pad" id="contact" data-section="contact">
+  <div class="wrap">
+    <p class="label sec__label" data-reveal="fade"><b>09 /</b> Your next chapter / Start a conversation</p>
+    <div class="rule" data-reveal="line"></div>
+    <div class="contact">
+      <div class="contact__l">
+        <p class="label label--c" data-reveal="fade">A limited roster. A personal approach.</p>
+        <h2 class="d h2 h2--xl" data-split="words">Become part<br>of PDM 2027.</h2>
+        <p class="lead lead--dim" data-split="lines">Tell us where you’re racing and what you want your season to look like.</p>
+      </div>
+      <form class="form" id="form" novalidate data-stagger>
+        <fieldset data-reveal="up">
+          <legend>I’m interested in</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="interest" value="Signature" checked><span>Signature</span></label>
+            <label class="chip"><input type="radio" name="interest" value="Race Weekend"><span>Race Weekend</span></label>
+            <label class="chip"><input type="radio" name="interest" value="Bespoke"><span>Bespoke</span></label>
+          </div>
+        </fieldset>
+        <div class="row" data-reveal="up">
+          <label class="fld"><span>Your name</span><input id="f-name" name="name" type="text" autocomplete="name" placeholder="Name" required></label>
+          <label class="fld"><span>Email address</span><input id="f-email" name="email" type="email" autocomplete="email" placeholder="Email" required></label>
+        </div>
+        <label class="fld" data-reveal="up"><span>Championship / racing plans</span><input id="f-plans" name="plans" type="text" placeholder="Where will you be racing in 2027?"></label>
+        <label class="fld" data-reveal="up"><span>What are you looking for?</span><textarea id="f-msg" name="message" rows="4" placeholder="Tell us about your goals, your media and your season."></textarea></label>
+        <div data-reveal="up">
+          <button class="btn btn--solid" type="submit" data-magnetic>Send enquiry <span class="arr" aria-hidden="true">↗</span></button>
+          <p class="form__msg" id="formMsg" role="status" aria-live="polite"></p>
+          <p class="fine fine--d">An enquiry starts a conversation and does not confirm programme availability.</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============================== FOOTER ============================== -->
+<footer class="foot" data-section="footer">
+  <div class="wrap">
+    <div class="foot__top">
+      <a class="logo logo--xl" href="#top" aria-label="PDM Motorsport / Media, back to top" data-glitch>
+        <img class="logo__base" src="assets/pdm-logo.png" alt="PDM Motorsport / Media" width="937" height="227" loading="lazy">
+        <span class="logo__ch logo__ch--r" aria-hidden="true"></span>
+        <span class="logo__ch logo__ch--c" aria-hidden="true"></span>
+      </a>
+      <nav class="foot__nav" aria-label="Footer">
+        <a href="#approach">The approach</a><a href="#signature">Signature</a>
+        <a href="#media">Our media</a><a href="#kit">Team kit</a>
+        <a href="#programmes">Programmes</a><a href="#contact">Enquire for 2027</a>
+      </nav>
+    </div>
+    <div class="foot__bot label">
+      <span>© PDM Motorsport / Media</span>
+      <span>Different drivers. One PDM team.</span>
+      <a href="#top">Back to top <span class="arr" aria-hidden="true">↑</span></a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
