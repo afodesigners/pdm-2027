@@ -190,8 +190,8 @@
       (BAYER[((row % 4 + 4) % 4) * 4 + ((col % 4 + 4) % 4)] + 0.5) / 16;
 
     const COLOR       = '#D0FBB6';   // lime-green, matches Framer demo
-    const DOT_SIZE    = 4;           // dither cell size in px
-    const TRAIL_WIDTH = 42;          // circle radius
+    const DOT_SIZE    = 3;           // dither cell size in px
+    const TRAIL_WIDTH = 26;          // circle radius
     const FADE_DUR    = 1000;        // ms until trail fully fades
     const DENSITY     = 0.72;
 
