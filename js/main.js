@@ -296,20 +296,74 @@
     return lenis;
   }
 
-  /* 3k. Page loader: counter, then the curtain lifts and the hero plays. */
+  /* 3k. Page loader: count → glitch logo centred → fly to header → hero plays. */
   function initLoader(lenis, onDone) {
-    const L = $('[data-loader]'), n = $('[data-loader-count]');
+    const L     = $('[data-loader]');
+    const n     = $('[data-loader-count]');
     if (!L) { onDone(); return; }
     lenis && lenis.stop();
-    const o = { v: 0 };
+
+    const wrap  = $('[data-loader-logo-wrap]');
+    const lLogo = $('[data-loader-logo]');
+    const lBase = $('.logo__base', lLogo);
+    const lR    = $('.logo__ch--r', lLogo);
+    const lC    = $('.logo__ch--c', lLogo);
+    const hLogo = $('a.logo[data-glitch]');
+
+    // Hide real header logo — loader logo will hand off to it
+    gsap.set(hLogo, { autoAlpha: 0 });
+    gsap.set(wrap,  { autoAlpha: 0 });
+
     let done = false;
-    const finish = () => { if (done) return; done = true; L.style.display = 'none'; lenis && lenis.start(); };
-    const tl = gsap.timeline({ onComplete: finish });
+    const finish = () => {
+      if (done) return;
+      done = true;
+      gsap.set(hLogo, { autoAlpha: 1 });
+      L.style.display = 'none';
+      lenis && lenis.start();
+    };
+
+    // Glitch burst — same algorithm as initGlitch, isolated for the loader logo
+    function runGlitch(onComplete) {
+      lLogo.classList.add('is-glitch');
+      const tl = gsap.timeline({ onComplete });
+      for (let i = 0; i < 12; i++) {
+        const a = rand(0, 70), b = rand(0, 70 - a * 0.5);
+        tl.set(lR,    { x: rand(-9, 9),  y: rand(-2, 2), clipPath: `inset(${a}% 0 ${100 - a - rand(6, 28)}% 0)` })
+          .set(lC,    { x: rand(-9, 9),  y: rand(-2, 2), clipPath: `inset(${b}% 0 ${100 - b - rand(6, 28)}% 0)` })
+          .set(lBase, { x: rand(-3, 3), skewX: rand(-8, 8), opacity: rand(0.75, 1) })
+          .to({}, { duration: rand(0.03, 0.075) });
+      }
+    }
+
+    // FLIP: fly loader logo from its centred position to the real header logo slot
+    function flyToHeader() {
+      gsap.set([lR, lC, lBase], { clearProps: 'all' });
+      lLogo.classList.remove('is-glitch');
+
+      const from  = lLogo.getBoundingClientRect();
+      const to    = hLogo.getBoundingClientRect();
+      const dx    = to.left - from.left;
+      const dy    = to.top  - from.top;
+      const scale = to.width / from.width;
+
+      gsap.to(lLogo, {
+        x: dx, y: dy, scale,
+        transformOrigin: '0 0',
+        duration: 0.85,
+        ease: 'expo.inOut',
+        onComplete: () => { finish(); onDone(); }
+      });
+    }
+
+    const o  = { v: 0 };
+    const tl = gsap.timeline();
     tl.to(o, { v: 100, duration: 1.5, ease: 'power2.inOut', onUpdate: () => { n.textContent = Math.round(o.v); } })
-      .to(L.querySelector('.loader__in'), { autoAlpha: 0, duration: 0.3 }, '+=0.1')
-      .add(onDone, '>-0.05')
-      .to(L, { yPercent: -100, duration: 1, ease: CFG.easeInOut }, '<');
-    gsap.delayedCall(6, () => { tl.progress(1); finish(); });   // failsafe: never trap the visitor
+      .to($('.loader__in', L), { autoAlpha: 0, duration: 0.25 }, '+=0.05')
+      .to(wrap, { autoAlpha: 1, duration: 0.35 }, '<+=0.1')
+      .call(() => runGlitch(flyToHeader));
+
+    gsap.delayedCall(8, () => { if (!done) { finish(); onDone(); } }); // failsafe
   }
 
   /* 3l. Media agenda rows: floating image preview that follows the cursor */
