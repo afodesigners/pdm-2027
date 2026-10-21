@@ -190,7 +190,7 @@
     document.addEventListener('pointerover', (e) => {
       const lab = e.target.closest('[data-cursor]');
       const hot = e.target.closest('a,button,label');
-      if (lab) { t.textContent = lab.dataset.cursor; gsap.to(el, { scale: 5, duration: 0.4, ease: "power3.out" }); gsap.to(t, { opacity: 1, scale: 1.25 / 5, duration: 0.3 }); }
+      if (lab) { gsap.to(el, { scale: 1, duration: 0.4, ease: "power3.out" }); gsap.to(t, { opacity: 0, duration: 0.15 }); }
       else if (hot) { gsap.to(el, { scale: 2.4, duration: 0.3 }); gsap.to(t, { opacity: 0, duration: 0.15 }); }
       else { gsap.to(el, { scale: 1, duration: 0.3 }); gsap.to(t, { opacity: 0, scale: 1, duration: 0.15 }); }
     });
