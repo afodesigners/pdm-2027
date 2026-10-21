@@ -50,6 +50,9 @@ const patches = [
   ["if (cap.textContent !== c.dataset.cap) {", "if (cap && cap.textContent !== c.dataset.cap) {"],
   ["cap.textContent = defaultCap;", "if (cap) cap.textContent = defaultCap;"],
   // GSAP warns in the console when an animation targets something you deleted; silence it
+  // one broken section must never stop the loader/hero: isolate each section in try/catch
+  ["Object.keys(SECTIONS).forEach((name) => { if ($(`[data-section=\"${name}\"]`)) SECTIONS[name](); });",
+   "Object.keys(SECTIONS).forEach((name) => { try { if ($(`[data-section=\"${name}\"]`)) SECTIONS[name](); } catch (e) { console.warn('Section failed:', name, e); } });"],
   ["gsap.registerPlugin(ScrollTrigger);", "gsap.registerPlugin(ScrollTrigger);\n  gsap.config({ nullTargetWarn: false });   // removed elements are fine"]
 ];
 let patched = 0;
