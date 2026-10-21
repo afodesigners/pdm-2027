@@ -179,64 +179,105 @@
     });
   }
 
-  /* 3i. Cursor dot trail (hover devices). Main dot + 8 trailing dots with spring lag.
-         Interactive elements: trail collapses, dot expands. [data-cursor] zones: dot stays small. */
+  /* 3i. Canvas dither cursor trail — Bayer 4×4 ordered dithering, ported from cursor-trail.framer.website */
   function initCursor() {
     if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    const el = $('[data-cursor-el]');
     document.documentElement.classList.add('has-cursor');
 
-    const TRAIL = 8;
-    const trail = Array.from({ length: TRAIL }, (_, i) => {
-      const frac = (i + 1) / TRAIL;
-      const size = +(7 * (1 - frac * 0.65)).toFixed(1);
-      const d = document.createElement('div');
-      d.className = 'cursor__trail';
-      d.style.cssText = `width:${size}px;height:${size}px;margin:${(-size / 2).toFixed(1)}px 0 0 ${(-size / 2).toFixed(1)}px;opacity:${(1 - frac * 0.85).toFixed(2)}`;
-      document.body.insertBefore(d, el);
-      return { el: d, baseOpacity: +(1 - frac * 0.85).toFixed(2) };
-    });
+    // Bayer 4×4 matrix for ordered dithering
+    const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+    const threshold = (col, row) =>
+      (BAYER[((row % 4 + 4) % 4) * 4 + ((col % 4 + 4) % 4)] + 0.5) / 16;
 
-    const qx = gsap.quickTo(el, 'x', { duration: 0.25, ease: 'power3' });
-    const qy = gsap.quickTo(el, 'y', { duration: 0.25, ease: 'power3' });
-    const tqx = trail.map(({ el: d }, i) => gsap.quickTo(d, 'x', { duration: 0.28 + i * 0.055, ease: 'power3' }));
-    const tqy = trail.map(({ el: d }, i) => gsap.quickTo(d, 'y', { duration: 0.28 + i * 0.055, ease: 'power3' }));
+    const COLOR       = '#D0FBB6';   // lime-green, matches Framer demo
+    const DOT_SIZE    = 4;           // dither cell size in px
+    const TRAIL_WIDTH = 42;          // circle radius
+    const FADE_DUR    = 1000;        // ms until trail fully fades
+    const DENSITY     = 0.72;
 
-    window.addEventListener('pointermove', (e) => {
-      qx(e.clientX); qy(e.clientY);
-      tqx.forEach((f) => f(e.clientX));
-      tqy.forEach((f) => f(e.clientY));
-    });
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:299;display:block';
+    document.body.appendChild(canvas);
 
-    const restoreTrail = () => trail.forEach(({ el: d, baseOpacity: op }) => gsap.to(d, { opacity: op, scale: 1, duration: 0.3 }));
+    const ctx = canvas.getContext('2d');
+    if (!ctx) { canvas.remove(); document.documentElement.classList.remove('has-cursor'); return; }
 
-    document.addEventListener('pointerover', (e) => {
-      const hot = e.target.closest('a,button,label');
-      const zone = e.target.closest('[data-cursor]');
-      if (hot) {
-        gsap.to(el, { scale: 2.8, duration: 0.3, ease: 'power3.out' });
-        trail.forEach(({ el: d }, i) => gsap.to(d, { opacity: 0, scale: 0, duration: 0.15 + i * 0.015 }));
-      } else if (zone) {
-        gsap.to(el, { scale: 1, duration: 0.3, ease: 'power3.out' });
-        trail.forEach(({ el: d }, i) => gsap.to(d, { opacity: 0, scale: 0, duration: 0.15 + i * 0.015 }));
-      } else {
-        gsap.to(el, { scale: 1, duration: 0.3, ease: 'power3.out' });
-        restoreTrail();
+    let W = 0, H = 0, rafId = 0, lastTime = performance.now(), lastPos = null;
+    const g = Math.max(1, Math.round(DOT_SIZE));
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(1, window.innerWidth);
+      H = Math.max(1, window.innerHeight);
+      canvas.width  = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = false;
+    }
+
+    function clear() { ctx.clearRect(0, 0, W, H); lastPos = null; }
+
+    function drawDot(x, y, alpha = 1) {
+      const radius = Math.max(g, TRAIL_WIDTH / 2);
+      const c1 = Math.floor((x - radius) / g), c2 = Math.ceil((x + radius) / g);
+      const r1 = Math.floor((y - radius) / g), r2 = Math.ceil((y + radius) / g);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = COLOR;
+      for (let row = r1; row <= r2; row++) {
+        for (let col = c1; col <= c2; col++) {
+          const px = col * g, py = row * g;
+          const dx = px + g / 2 - x, dy = py + g / 2 - y;
+          const dist = Math.sqrt(dx * dx + dy * dy) / radius;
+          if (dist > 1) continue;
+          if ((1 - dist) ** 0.72 * DENSITY * alpha >= threshold(col, row))
+            ctx.fillRect(px, py, g, g);
+        }
       }
-    });
+    }
 
-    document.addEventListener('pointerleave', () => {
-      gsap.to(el, { autoAlpha: 0, duration: 0.2 });
-      trail.forEach(({ el: d }) => gsap.to(d, { opacity: 0, duration: 0.2 }));
-    });
-    document.addEventListener('pointerenter', () => {
-      gsap.to(el, { autoAlpha: 1, duration: 0.2 });
-      restoreTrail();
-    });
+    function drawTrail(x, y) {
+      if (!lastPos) { drawDot(x, y); lastPos = { x, y }; return; }
+      const dx = x - lastPos.x, dy = y - lastPos.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const step  = Math.max(g, TRAIL_WIDTH * 0.16);
+      const steps = Math.max(1, Math.ceil(dist / step));
+      for (let i = 1; i <= steps; i++) {
+        const t = i / steps;
+        drawDot(lastPos.x + dx * t, lastPos.y + dy * t, 0.82 + 0.18 * t);
+      }
+      lastPos = { x, y };
+    }
+
+    function fade(time) {
+      const elapsed = Math.min(64, time - lastTime);
+      lastTime = time;
+      const alpha = 1 - 0.01 ** (elapsed / Math.max(100, FADE_DUR));
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-over';
+      rafId = requestAnimationFrame(fade);
+    }
+
+    const onMove = (e) => drawTrail(e.clientX, e.clientY);
+    const onOut  = (e) => { if (!e.relatedTarget) lastPos = null; };
+
+    resize();
+    window.addEventListener('resize',       resize, { passive: true });
+    window.addEventListener('pointermove',  onMove, { passive: true });
+    window.addEventListener('pointerout',   onOut,  { passive: true });
+    window.addEventListener('blur',         clear);
+    rafId = requestAnimationFrame(fade);
 
     return () => {
       document.documentElement.classList.remove('has-cursor');
-      trail.forEach(({ el: d }) => d.remove());
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize',      resize);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerout',  onOut);
+      window.removeEventListener('blur',        clear);
+      canvas.remove();
     };
   }
 
