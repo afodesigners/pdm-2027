@@ -6,6 +6,8 @@
    state of every element.
    ========================================================================== */
 
+@font-face{font-family:"Stereo Gothic";src:url("../assets/fonts/StereoGothic-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+
 :root{
   /* palette (from the Figma file) */
   --ink:#090b0d; --ink-2:#121619; --line-d:#333a40; --mute-d:#9fa7ad;
@@ -15,6 +17,7 @@
   --display:Anton,Impact,"Arial Narrow",sans-serif;
   --body:Inter,system-ui,Arial,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --stereo:"Stereo Gothic",Anton,Impact,sans-serif;
   /* layout */
   --gut:clamp(20px,4.45vw,64px);
   --head:80px;
@@ -38,7 +41,7 @@ section[id]{scroll-margin-top:var(--head)}
 .h2{font-size:var(--h2);text-wrap:balance}
 .h2--wide{margin:56px 0 64px}
 .h2--xl{font-size:clamp(52px,7.4vw,112px)}
-.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute-d);font-weight:400}
+.label{font-family:var(--stereo);font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute-d);font-weight:400}
 .sec--light .label{color:var(--mute-l)}
 .label b{color:var(--cyan-d);font-weight:500;margin-right:6px}
 .sec--dark .label b{color:var(--cyan)}
