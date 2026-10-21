@@ -362,7 +362,7 @@
       const root = $('[data-section="hero"]');
       const cards = $$('.card', root);
       const cap = $('#heroCap');
-      const defaultCap = cap.textContent;
+      const defaultCap = cap ? cap.textContent : '';
 
       // load-in timeline
       const words = $$('.hero__title .wi');
@@ -390,7 +390,7 @@
         c.addEventListener('pointerenter', () => {
           cards.forEach((x) => x.classList.toggle('on', x === c));
           gsap.to(cards, { opacity: (i, el) => (el === c ? 1 : 0.45), duration: 0.4, overwrite: 'auto' });
-          if (cap.textContent !== c.dataset.cap) {
+          if (cap && cap.textContent !== c.dataset.cap) {
             gsap.fromTo(cap, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.4 });
             cap.textContent = c.dataset.cap;
           }
@@ -399,7 +399,7 @@
       $('#heroCards').addEventListener('pointerleave', () => {
         cards.forEach((x) => x.classList.remove('on'));
         gsap.to(cards, { opacity: 1, duration: 0.4, overwrite: 'auto' });
-        cap.textContent = defaultCap;
+        if (cap) cap.textContent = defaultCap;
       });
 
       // cards: mouse parallax (desktop pointer)
