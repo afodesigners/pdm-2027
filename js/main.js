@@ -618,6 +618,102 @@
       ScrollTrigger.create({ onUpdate: (s) => skew(gsap.utils.clamp(-8, 8, s.getVelocity() / -300)) });
     },
 
+    /* VIDEOGRAPHY — draggable, snappable card carousel (CodePen RwKwLWK style) */
+    videography() {
+      const root   = $('[data-section="videography"]');
+      if (!root) return;
+      const wrap   = $('[data-vg-wrap]',  root);
+      const track  = $('[data-vg-track]', root);
+      const cards  = $$('.vg__card', root);
+      const arrowL = $('.vg__arr--l', root);
+      const arrowR = $('.vg__arr--r', root);
+      const dotEls = $$('.vg__dot', root);
+      const total  = cards.length;
+      let cur = 0;
+
+      const gut = () => parseInt(getComputedStyle(track).paddingInlineStart) || 20;
+
+      // Left-align card[i] at the gut padding — same origin as every other section.
+      function snapX(i) {
+        return -(cards[i].offsetLeft - gut());
+      }
+
+      function updateUI(i) {
+        dotEls.forEach((d, j) => d.classList.toggle('is-on', j === i));
+        if (arrowL) arrowL.disabled = i === 0;
+        if (arrowR) arrowR.disabled = i === total - 1;
+      }
+
+      function goTo(i, instant) {
+        cur = Math.max(0, Math.min(total - 1, i));
+        const x = snapX(cur);
+        if (instant) gsap.set(track, { x });
+        else gsap.to(track, { x, duration: 0.85, ease: 'expo.out', overwrite: 'auto' });
+        updateUI(cur);
+      }
+
+      // Drag — pointer events, no extra plugin needed.
+      let isDrag = false, x0 = 0, tx0 = 0, vx = 0, lx = 0, lt = 0;
+
+      wrap.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        isDrag = true;
+        x0 = e.clientX;
+        tx0 = gsap.getProperty(track, 'x');
+        vx = 0; lx = e.clientX; lt = performance.now();
+        wrap.classList.add('is-dragging');
+        wrap.setPointerCapture(e.pointerId);
+        gsap.killTweensOf(track, 'x');
+      });
+
+      wrap.addEventListener('pointermove', (e) => {
+        if (!isDrag) return;
+        const now = performance.now(), dt = now - lt;
+        if (dt > 0) vx = (e.clientX - lx) / dt * 16;
+        lx = e.clientX; lt = now;
+        gsap.set(track, { x: tx0 + (e.clientX - x0) });
+      });
+
+      const endDrag = () => {
+        if (!isDrag) return;
+        isDrag = false;
+        wrap.classList.remove('is-dragging');
+        // Flick: velocity-based advance; otherwise snap to nearest.
+        if (Math.abs(vx) > 5) {
+          goTo(cur + (vx < 0 ? 1 : -1));
+        } else {
+          const cx = gsap.getProperty(track, 'x');
+          let near = 0, nearD = Infinity;
+          cards.forEach((_, i) => { const d = Math.abs(cx - snapX(i)); if (d < nearD) { nearD = d; near = i; } });
+          goTo(near);
+        }
+      };
+
+      wrap.addEventListener('pointerup', endDrag);
+      wrap.addEventListener('pointercancel', endDrag);
+
+      if (arrowL) arrowL.addEventListener('click', () => goTo(cur - 1));
+      if (arrowR) arrowR.addEventListener('click', () => goTo(cur + 1));
+      dotEls.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+
+      window.addEventListener('resize', () => goTo(cur, true), { passive: true });
+
+      // Entry: cards stagger up from a slight offset as section scrolls in.
+      gsap.set(cards, { autoAlpha: 0, y: 40 });
+      ScrollTrigger.create({
+        trigger: root, start: 'top 72%', once: true,
+        onEnter: () => {
+          goTo(0, true);
+          gsap.to(cards, {
+            autoAlpha: 1, y: 0, duration: 1.1, ease: CFG.ease, stagger: 0.1,
+            onComplete: () => ScrollTrigger.refresh()
+          });
+        }
+      });
+
+      goTo(0, true);
+    },
+
     /* CONTACT — chips, validation, submit feedback. Replace the fake send with your endpoint / form plugin. */
     contact() {
       const form = $('#form'), msg = $('#formMsg');
