@@ -314,6 +314,22 @@ html.lenis,html.lenis body{height:auto}
 
 .sec--light .vg__arr{color:var(--ink);border-color:var(--line-l)}
 
+/* preview video crossfade in carousel card */
+.vg__thumb img{transition:filter .6s,transform 1.2s cubic-bezier(.16,1,.3,1),opacity .4s}
+.vg__preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;pointer-events:none}
+.vg__card.is-previewing .vg__preview{opacity:1}
+.vg__card.is-previewing .vg__thumb>img{opacity:0}
+
+/* video lightbox modal */
+.vg-modal{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center}
+.vg-modal[hidden]{display:none}
+.vg-modal__bd{position:absolute;inset:0;background:rgba(9,11,13,.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.vg-modal__box{position:relative;z-index:1;height:min(85vh,calc((100vw - 32px)*16/9));aspect-ratio:9/16;width:auto}
+.vg-modal__vid{display:block;width:100%;height:100%;border-radius:6px;background:#000}
+.vg-modal__close{position:fixed;top:20px;right:20px;z-index:902;width:52px;height:52px;border-radius:50%;background:#fff;color:#09090d;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.55);transition:background .2s,transform .25s cubic-bezier(.16,1,.3,1)}
+.vg-modal__close:hover{background:var(--cyan);transform:scale(1.1)}
+body.vg-modal-open{overflow:hidden}
+
 /* ---------- responsive ---------- */
 @media (max-width:1024px){
   .ag{grid-template-columns:50px 1fr 1fr 30px}

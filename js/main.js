@@ -618,7 +618,7 @@
       ScrollTrigger.create({ onUpdate: (s) => skew(gsap.utils.clamp(-8, 8, s.getVelocity() / -300)) });
     },
 
-    /* VIDEOGRAPHY — infinite drag carousel (gsap.utils.wrap technique, CodePen RwKwLWK) */
+    /* VIDEOGRAPHY — infinite drag carousel + 5s preview autoplay + fullscreen modal */
     videography() {
       const root      = $('[data-section="videography"]');
       if (!root) return;
@@ -629,6 +629,96 @@
       const N         = cards.length;
       if (N === 0) return;
 
+      /* inject muted preview <video> into each card thumb */
+      const previewVids = cards.map(card => {
+        const src = card.dataset.video;
+        if (!src) return null;
+        const v = document.createElement('video');
+        v.className   = 'vg__preview';
+        v.src         = src;
+        v.muted       = true;
+        v.playsInline = true;
+        v.preload     = 'metadata';
+        card.querySelector('.vg__thumb').prepend(v);
+        return v;
+      });
+
+      /* 5-second loop preview for the center (active) card */
+      let previewTimer = null;
+      let activeIdx    = -1;
+      let sectionLive  = false;
+
+      function playPreview(idx) {
+        const v = previewVids[idx];
+        if (!v) return;
+        cards[idx].classList.add('is-previewing');
+        v.currentTime = 0;
+        v.play().catch(() => {});
+        clearTimeout(previewTimer);
+        const loop = () => { v.currentTime = 0; v.play().catch(() => {}); previewTimer = setTimeout(loop, 5000); };
+        previewTimer = setTimeout(loop, 5000);
+      }
+
+      function stopPreview(idx) {
+        clearTimeout(previewTimer);
+        const v = previewVids[idx];
+        if (v) { v.pause(); v.currentTime = 0; }
+        cards[idx]?.classList.remove('is-previewing');
+      }
+
+      function switchPreview(newIdx) {
+        if (newIdx === activeIdx) return;
+        if (activeIdx >= 0) stopPreview(activeIdx);
+        activeIdx = newIdx;
+        if (sectionLive) playPreview(newIdx);
+      }
+
+      /* build fullscreen modal once, append to body */
+      const modal = document.createElement('div');
+      modal.className = 'vg-modal';
+      modal.setAttribute('hidden', '');
+      modal.innerHTML =
+        '<div class="vg-modal__bd"></div>' +
+        '<div class="vg-modal__box"><video class="vg-modal__vid" playsinline controls></video></div>' +
+        '<button class="vg-modal__close" aria-label="Close video">' +
+        '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">' +
+        '<path d="M1.5 1.5l15 15M16.5 1.5l-15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+        '</svg></button>';
+      document.body.appendChild(modal);
+
+      const mVid   = modal.querySelector('.vg-modal__vid');
+      const mBd    = modal.querySelector('.vg-modal__bd');
+      const mClose = modal.querySelector('.vg-modal__close');
+      const mBox   = modal.querySelector('.vg-modal__box');
+      let modalOpen = false;
+
+      function openModal(src) {
+        if (modalOpen) return;
+        modalOpen = true;
+        mVid.src = src;
+        modal.removeAttribute('hidden');
+        document.body.classList.add('vg-modal-open');
+        gsap.set(mBox, { scale: 0.88, autoAlpha: 0 });
+        gsap.set(mBd,  { autoAlpha: 0 });
+        gsap.to(mBd,  { autoAlpha: 1, duration: 0.35, ease: 'power2.out' });
+        gsap.to(mBox, { scale: 1, autoAlpha: 1, duration: 0.45, ease: 'expo.out' });
+        mVid.play().catch(() => {});
+      }
+
+      function closeModal() {
+        if (!modalOpen) return;
+        modalOpen = false;
+        gsap.to(mBox, { scale: 0.88, autoAlpha: 0, duration: 0.28, ease: 'power2.in' });
+        gsap.to(mBd,  { autoAlpha: 0, duration: 0.28, ease: 'power2.in',
+          onComplete() { modal.setAttribute('hidden', ''); mVid.pause(); mVid.src = ''; document.body.classList.remove('vg-modal-open'); }
+        });
+      }
+
+      mClose.addEventListener('click', closeModal);
+      mBd.addEventListener('click', closeModal);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modalOpen) closeModal(); });
+
+      /* carousel layout */
       let containerW = 0, cardW = 0, spacing = 0, totalW = 0;
 
       function measure() {
@@ -657,6 +747,7 @@
         });
         const ai = (((Math.round(x / spacing) % N) + N) % N);
         cards.forEach((c, i) => c.classList.toggle('is-active', i === ai));
+        switchPreview(ai);
       }
 
       function snapTo(x, instant = false) {
@@ -666,11 +757,14 @@
           onUpdate: () => layoutCards(proxy.x) });
       }
 
+      /* drag + tap detection */
       let isDrag = false, startCX = 0, startPX = 0, vx = 0, lx = 0, lt = 0;
+      let dragDelta = 0, downTarget = null;
 
       trackWrap.addEventListener('pointerdown', (e) => {
         if (e.button !== 0) return;
         isDrag = true; startCX = e.clientX; startPX = proxy.x;
+        dragDelta = 0; downTarget = e.target;
         vx = 0; lx = e.clientX; lt = performance.now();
         trackWrap.classList.add('is-dragging');
         trackWrap.setPointerCapture(e.pointerId);
@@ -679,6 +773,7 @@
 
       trackWrap.addEventListener('pointermove', (e) => {
         if (!isDrag) return;
+        dragDelta = Math.abs(e.clientX - startCX);
         const now = performance.now(), dt = now - lt;
         if (dt > 0) vx = (e.clientX - lx) / dt * 16;
         lx = e.clientX; lt = now;
@@ -686,16 +781,25 @@
         layoutCards(proxy.x);
       });
 
-      const endDrag = () => {
+      trackWrap.addEventListener('pointerup', (e) => {
         if (!isDrag) return;
+        const wasTap = dragDelta < 8;
         isDrag = false;
         trackWrap.classList.remove('is-dragging');
         const advance = Math.abs(vx) > 4 ? (vx < 0 ? 1 : -1) : 0;
         snapTo(proxy.x + advance * spacing * 0.55);
-      };
+        if (wasTap) {
+          const card = downTarget?.closest('.vg__card');
+          if (card?.dataset.video) openModal(card.dataset.video);
+        }
+      });
 
-      trackWrap.addEventListener('pointerup',     endDrag);
-      trackWrap.addEventListener('pointercancel', endDrag);
+      trackWrap.addEventListener('pointercancel', () => {
+        if (!isDrag) return;
+        isDrag = false;
+        trackWrap.classList.remove('is-dragging');
+        snapTo(proxy.x);
+      });
 
       if (arrowL) arrowL.addEventListener('click', () => snapTo(proxy.x - spacing));
       if (arrowR) arrowR.addEventListener('click', () => snapTo(proxy.x + spacing));
@@ -708,6 +812,15 @@
 
       window.addEventListener('resize', () => { measure(); layoutCards(proxy.x); }, { passive: true });
 
+      /* start/stop preview as section enters or leaves the viewport */
+      const io = new IntersectionObserver(([entry]) => {
+        sectionLive = entry.isIntersecting;
+        if (sectionLive && activeIdx >= 0) playPreview(activeIdx);
+        else stopPreview(activeIdx);
+      }, { threshold: 0.25 });
+      io.observe(root);
+
+      /* initial reveal */
       gsap.set(trackWrap, { autoAlpha: 0 });
       ScrollTrigger.create({
         trigger: root, start: 'top 72%', once: true,
