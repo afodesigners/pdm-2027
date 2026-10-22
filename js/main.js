@@ -568,7 +568,7 @@
       mm.add(CFG.desktop, () => {
         gsap.set(stage, { clipPath: 'inset(16% 24% 16% 24%)' });
         gsap.set($$('.banner__p img', root), { scale: 1.25 });
-        const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: '+=140%', scrub: 0.8, pin: true, anticipatePin: 1 } });
+        const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: '+=140%', scrub: 0.5, pin: true, anticipatePin: 1, fastScrollEnd: true } });
         tl.to(stage, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1 })
           .to($$('.banner__p img', root), { scale: 1, duration: 1 }, 0)
           .to(words, { yPercent: 0, duration: 0.6, stagger: 0.05, ease: 'power3.out' }, 0.45)
