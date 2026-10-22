@@ -618,100 +618,107 @@
       ScrollTrigger.create({ onUpdate: (s) => skew(gsap.utils.clamp(-8, 8, s.getVelocity() / -300)) });
     },
 
-    /* VIDEOGRAPHY — draggable, snappable card carousel (CodePen RwKwLWK style) */
+    /* VIDEOGRAPHY — infinite drag carousel (gsap.utils.wrap technique, CodePen RwKwLWK) */
     videography() {
-      const root   = $('[data-section="videography"]');
+      const root      = $('[data-section="videography"]');
       if (!root) return;
-      const wrap   = $('[data-vg-wrap]',  root);
-      const track  = $('[data-vg-track]', root);
-      const cards  = $$('.vg__card', root);
-      const arrowL = $('.vg__arr--l', root);
-      const arrowR = $('.vg__arr--r', root);
-      const dotEls = $$('.vg__dot', root);
-      const total  = cards.length;
-      let cur = 0;
+      const trackWrap = $('[data-vg-wrap]', root);
+      const cards     = $$('.vg__card', root);
+      const arrowL    = $('.vg__arr--l', root);
+      const arrowR    = $('.vg__arr--r', root);
+      const N         = cards.length;
+      if (N === 0) return;
 
-      const gut = () => parseInt(getComputedStyle(track).paddingInlineStart) || 20;
+      let containerW = 0, cardW = 0, spacing = 0, totalW = 0;
 
-      // Left-align card[i] at the gut padding — same origin as every other section.
-      function snapX(i) {
-        return -(cards[i].offsetLeft - gut());
+      function measure() {
+        containerW = trackWrap.offsetWidth;
+        cardW      = cards[0].offsetWidth;
+        spacing    = cardW + Math.round(containerW * 0.042);
+        totalW     = spacing * N;
       }
 
-      function updateUI(i) {
-        dotEls.forEach((d, j) => d.classList.toggle('is-on', j === i));
-        if (arrowL) arrowL.disabled = i === 0;
-        if (arrowR) arrowR.disabled = i === total - 1;
+      const proxy = { x: 0 };
+
+      function layoutCards(x) {
+        const cx = containerW / 2;
+        cards.forEach((card, i) => {
+          let rel = ((i * spacing - x % totalW) % totalW + totalW) % totalW;
+          if (rel > totalW / 2) rel -= totalW;
+          const lx = cx + rel - cardW / 2;
+          const d  = Math.abs(rel) / spacing;
+          gsap.set(card, {
+            x:        lx,
+            yPercent: -50,
+            scale:    Math.max(0.72, 1 - d * 0.1),
+            opacity:  Math.max(0.28, 1 - d * 0.24),
+            zIndex:   Math.round(100 - d * 20),
+          });
+        });
+        const ai = (((Math.round(x / spacing) % N) + N) % N);
+        cards.forEach((c, i) => c.classList.toggle('is-active', i === ai));
       }
 
-      function goTo(i, instant) {
-        cur = Math.max(0, Math.min(total - 1, i));
-        const x = snapX(cur);
-        if (instant) gsap.set(track, { x });
-        else gsap.to(track, { x, duration: 0.85, ease: 'expo.out', overwrite: 'auto' });
-        updateUI(cur);
+      function snapTo(x, instant = false) {
+        const target = Math.round(x / spacing) * spacing;
+        if (instant) { proxy.x = target; layoutCards(target); return; }
+        gsap.to(proxy, { x: target, duration: 0.92, ease: 'expo.out', overwrite: true,
+          onUpdate: () => layoutCards(proxy.x) });
       }
 
-      // Drag — pointer events, no extra plugin needed.
-      let isDrag = false, x0 = 0, tx0 = 0, vx = 0, lx = 0, lt = 0;
+      let isDrag = false, startCX = 0, startPX = 0, vx = 0, lx = 0, lt = 0;
 
-      wrap.addEventListener('pointerdown', (e) => {
+      trackWrap.addEventListener('pointerdown', (e) => {
         if (e.button !== 0) return;
-        isDrag = true;
-        x0 = e.clientX;
-        tx0 = gsap.getProperty(track, 'x');
+        isDrag = true; startCX = e.clientX; startPX = proxy.x;
         vx = 0; lx = e.clientX; lt = performance.now();
-        wrap.classList.add('is-dragging');
-        wrap.setPointerCapture(e.pointerId);
-        gsap.killTweensOf(track, 'x');
+        trackWrap.classList.add('is-dragging');
+        trackWrap.setPointerCapture(e.pointerId);
+        gsap.killTweensOf(proxy);
       });
 
-      wrap.addEventListener('pointermove', (e) => {
+      trackWrap.addEventListener('pointermove', (e) => {
         if (!isDrag) return;
         const now = performance.now(), dt = now - lt;
         if (dt > 0) vx = (e.clientX - lx) / dt * 16;
         lx = e.clientX; lt = now;
-        gsap.set(track, { x: tx0 + (e.clientX - x0) });
+        proxy.x = startPX - (e.clientX - startCX);
+        layoutCards(proxy.x);
       });
 
       const endDrag = () => {
         if (!isDrag) return;
         isDrag = false;
-        wrap.classList.remove('is-dragging');
-        // Flick: velocity-based advance; otherwise snap to nearest.
-        if (Math.abs(vx) > 5) {
-          goTo(cur + (vx < 0 ? 1 : -1));
-        } else {
-          const cx = gsap.getProperty(track, 'x');
-          let near = 0, nearD = Infinity;
-          cards.forEach((_, i) => { const d = Math.abs(cx - snapX(i)); if (d < nearD) { nearD = d; near = i; } });
-          goTo(near);
-        }
+        trackWrap.classList.remove('is-dragging');
+        const advance = Math.abs(vx) > 4 ? (vx < 0 ? 1 : -1) : 0;
+        snapTo(proxy.x + advance * spacing * 0.55);
       };
 
-      wrap.addEventListener('pointerup', endDrag);
-      wrap.addEventListener('pointercancel', endDrag);
+      trackWrap.addEventListener('pointerup',     endDrag);
+      trackWrap.addEventListener('pointercancel', endDrag);
 
-      if (arrowL) arrowL.addEventListener('click', () => goTo(cur - 1));
-      if (arrowR) arrowR.addEventListener('click', () => goTo(cur + 1));
-      dotEls.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+      if (arrowL) arrowL.addEventListener('click', () => snapTo(proxy.x - spacing));
+      if (arrowR) arrowR.addEventListener('click', () => snapTo(proxy.x + spacing));
 
-      window.addEventListener('resize', () => goTo(cur, true), { passive: true });
+      trackWrap.setAttribute('tabindex', '0');
+      trackWrap.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft')  snapTo(proxy.x - spacing);
+        if (e.key === 'ArrowRight') snapTo(proxy.x + spacing);
+      });
 
-      // Entry: cards stagger up from a slight offset as section scrolls in.
-      gsap.set(cards, { autoAlpha: 0, y: 40 });
+      window.addEventListener('resize', () => { measure(); layoutCards(proxy.x); }, { passive: true });
+
+      gsap.set(trackWrap, { autoAlpha: 0 });
       ScrollTrigger.create({
         trigger: root, start: 'top 72%', once: true,
         onEnter: () => {
-          goTo(0, true);
-          gsap.to(cards, {
-            autoAlpha: 1, y: 0, duration: 1.1, ease: CFG.ease, stagger: 0.1,
-            onComplete: () => ScrollTrigger.refresh()
-          });
-        }
+          measure(); snapTo(0, true);
+          gsap.to(trackWrap, { autoAlpha: 1, duration: 0.9, ease: 'power2.out',
+            onComplete: () => ScrollTrigger.refresh() });
+        },
       });
 
-      goTo(0, true);
+      measure(); snapTo(0, true);
     },
 
     /* CONTACT — chips, validation, submit feedback. Replace the fake send with your endpoint / form plugin. */
