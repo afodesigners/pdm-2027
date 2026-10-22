@@ -580,6 +580,36 @@
       });
     },
 
+    /* ALWAYS — mouse-parallax depth on the right image + list-item hover zoom */
+    always() {
+      const root = $('[data-section="always"]');
+      if (!root) return;
+      const img  = $('.always__r img', root);
+      const list = $$('.always__list li', root);
+      if (!img) return;
+
+      if (!matchMedia('(hover: hover) and (min-width: 821px)').matches) return;
+
+      const qx = gsap.quickTo(img, 'x', { duration: 1.6, ease: 'power3' });
+      const qy = gsap.quickTo(img, 'y', { duration: 1.6, ease: 'power3' });
+
+      root.addEventListener('pointermove', (e) => {
+        const r = root.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width  - 0.5;
+        const ny = (e.clientY - r.top)  / r.height - 0.5;
+        qx(nx * -24);
+        qy(ny * -16);
+      });
+      root.addEventListener('pointerleave', () => { qx(0); qy(0); });
+
+      list.forEach((li) => {
+        li.addEventListener('pointerenter', () =>
+          gsap.to(img, { scale: 1.06, duration: 0.9, ease: 'power2.out', overwrite: 'auto' }));
+        li.addEventListener('pointerleave', () =>
+          gsap.to(img, { scale: 1,    duration: 1.3, ease: 'power2.out', overwrite: 'auto' }));
+      });
+    },
+
     /* KIT — category ticker that skews with scroll speed */
     kit() {
       const t = initMarquees('.tags__in');

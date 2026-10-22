@@ -228,14 +228,16 @@ html.lenis,html.lenis body{height:auto}
 .fine--d{color:var(--mute-d);margin-top:18px}
 
 /* ---------- always ---------- */
-.always{display:grid;grid-template-columns:1fr 1fr;background:var(--ink);min-height:min(100svh,860px)}
+.always{display:grid;grid-template-columns:1fr 1.2fr;background:var(--ink);min-height:min(100svh,860px)}
 .always__l{display:flex;flex-direction:column;justify-content:center;gap:0;padding-block:clamp(72px,9vw,130px);max-width:none;margin:0;width:100%}
 .always__l .h2{margin:clamp(36px,4vw,56px) 0 36px;font-size:clamp(40px,4.8vw,76px)}
 .always__list{display:grid;border-top:1px solid var(--line-d)}
-.always__list li{padding:15px 0;border-bottom:1px solid var(--line-d);color:rgba(255,255,255,.92)}
+.always__list li{padding:15px 0;border-bottom:1px solid var(--line-d);color:rgba(255,255,255,.92);transition:color .3s}
+.always__list li:hover{color:#fff}
 .always__r{position:relative;overflow:hidden;min-height:420px}
+.always__r::before{content:'';position:absolute;inset:0 auto 0 0;width:32%;background:linear-gradient(to right,var(--ink) 0%,transparent 100%);z-index:1;pointer-events:none}
 .always__r .pimg{position:absolute;inset:0}
-.always__r .pimg img{object-position:40% center}
+.always__r .pimg img{object-position:40% center;will-change:transform}
 
 /* ---------- team kit ---------- */
 .kit{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:auto auto;gap:clamp(12px,2vw,28px);margin-top:clamp(48px,6vw,80px)}
