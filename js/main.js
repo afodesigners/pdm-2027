@@ -197,7 +197,7 @@
 
     const canvas = document.createElement('canvas');
     canvas.setAttribute('aria-hidden', 'true');
-    canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:299;display:block';
+    canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:1001;display:block';
     document.body.appendChild(canvas);
 
     const ctx = canvas.getContext('2d');
@@ -781,7 +781,7 @@
         layoutCards(proxy.x);
       });
 
-      trackWrap.addEventListener('pointerup', (e) => {
+      trackWrap.addEventListener('pointerup', () => {
         if (!isDrag) return;
         const wasTap = dragDelta < 8;
         isDrag = false;
