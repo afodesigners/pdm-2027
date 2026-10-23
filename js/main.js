@@ -658,6 +658,7 @@
             to.hidden = false;
             gsap.set(to, { autoAlpha: 0, y: 14 });
             gsap.to(to, { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power3.out' });
+            if (idx === 1) initPhGallery();
             if (toItems.length) {
               gsap.fromTo(toItems,
                 { y: 22, autoAlpha: 0 },
@@ -671,6 +672,182 @@
 
       vgTabs.forEach((t, i) => t.addEventListener('click', () => switchVgTab(i)));
       window.addEventListener('resize', () => slidePill(activeTab, true));
+
+      /* ── photography scatter gallery (lazy-init on first tab activation) ── */
+      let phReady = false;
+      function initPhGallery() {
+        if (phReady) return;
+        phReady = true;
+
+        const pStage    = $('.ph__stage', root);
+        const pScatter  = $('[data-ph-scatter]', root);
+        const pDotsWrap = $('[data-ph-dots]', root);
+        const pPrev     = $('.ph__btn--p', root);
+        const pNext     = $('.ph__btn--n', root);
+        if (!pStage) return;
+
+        const SRCS = [
+          { src: 'assets/img/drv1.jpg',           alt: 'Driver portrait' },
+          { src: 'assets/img/drv2.jpg',            alt: 'Driver portrait' },
+          { src: 'assets/img/banner-l.jpg',        alt: 'Helmet detail' },
+          { src: 'assets/img/med-motorsport.jpg',  alt: 'Motorsport' },
+          { src: 'assets/img/drv3.jpg',            alt: 'Driver portrait' },
+          { src: 'assets/img/kit-1.jpg',           alt: 'Driver in cockpit' },
+          { src: 'assets/img/med-social.jpg',      alt: 'Social lifestyle' },
+          { src: 'assets/img/drv4.jpg',            alt: 'Driver portrait' },
+          { src: 'assets/img/banner-r.jpg',        alt: 'Formula car' },
+          { src: 'assets/img/med-lifestyle.jpg',   alt: 'Lifestyle' },
+          { src: 'assets/img/drv5.jpg',            alt: 'Driver portrait' },
+          { src: 'assets/img/med-brand.jpg',       alt: 'Brand photography' },
+        ];
+
+        // Desktop (≥820px): 5 per page — x/y at 1000px design width
+        const D_SPREADS = [
+          [
+            { x:-440, y: 14, rot: -9 }, { x:-215, y:-20, rot:  5 },
+            { x:   0, y: 24, rot: -3 }, { x: 215, y:-14, rot:  8 }, { x: 435, y: 10, rot: -6 },
+          ],
+          [
+            { x:-425, y: -6, rot:-12 }, { x:-205, y: 22, rot:  3 },
+            { x:  12, y:-20, rot: -2 }, { x: 220, y: 16, rot:  7 }, { x: 445, y: -9, rot:-10 },
+          ],
+          [
+            { x:-455, y: 22, rot:  7 }, { x:-212, y: -9, rot: -5 },
+            { x:   5, y: 20, rot:  4 }, { x: 218, y:-22, rot: -8 }, { x: 440, y: 16, rot: 11 },
+          ],
+        ];
+        // Mobile (<820px): 1 per page — centred with slight rotation variety
+        const M_ROTS   = [-4, 3, -2, 5, -3, 2, -5, 4, -2, 3, -4, 2];
+        const M_SPREADS = SRCS.map((_, i) => [{ x: 0, y: -12, rot: M_ROTS[i] }]);
+
+        let curPage  = -1;
+        let builtPer = 0;
+        let phCards  = [];
+
+        // Build all card elements once
+        SRCS.forEach(({ src, alt }) => {
+          const fig = document.createElement('figure');
+          fig.className = 'ph__card';
+          const img = document.createElement('img');
+          img.src = src; img.alt = alt; img.loading = 'lazy';
+          fig.appendChild(img);
+          pScatter.appendChild(fig);
+          gsap.set(fig, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
+          phCards.push(fig);
+        });
+
+        // Hover: lift & straighten
+        phCards.forEach((c, i) => {
+          c.addEventListener('pointerenter', () => {
+            gsap.to(c, { scale: 1.06, rotation: 0, zIndex: 10, duration: 0.38,
+              ease: 'power3.out', boxShadow: '0 22px 60px rgba(0,0,0,.22)' });
+          });
+          c.addEventListener('pointerleave', () => {
+            const { per, spreads } = getCfg();
+            const pg = Math.floor(i / per);
+            if (pg !== curPage) return;
+            const pos = getPos(spreads, pg, per)[i % per];
+            gsap.to(c, { scale: 1, rotation: pos ? pos.rot : 0, zIndex: 2,
+              duration: 0.5, ease: 'power3.out', boxShadow: '0 4px 24px rgba(0,0,0,.14)' });
+          });
+        });
+
+        function getCfg() {
+          return window.innerWidth < 820
+            ? { per: 1, spreads: M_SPREADS, designW: 375  }
+            : { per: 5, spreads: D_SPREADS, designW: 1000 };
+        }
+
+        function sc(designW) { return Math.min(1, (pStage.offsetWidth - 60) / designW); }
+
+        // If fewer cards than spread positions, use centred subset
+        function getPos(spreads, pageIdx, per) {
+          const spread = spreads[pageIdx % spreads.length];
+          const count  = Math.min(per, SRCS.length - pageIdx * per);
+          if (count >= spread.length) return spread;
+          const start = Math.floor((spread.length - count) / 2);
+          return spread.slice(start, start + count);
+        }
+
+        function rebuildDots(pages) {
+          pDotsWrap.innerHTML = '';
+          for (let i = 0; i < pages; i++) {
+            const d = document.createElement('button');
+            d.className = 'ph__dot' + (i === 0 ? ' is-active' : '');
+            d.setAttribute('aria-label', `Photo set ${i + 1} of ${pages}`);
+            d.addEventListener('click', () => go(i));
+            pDotsWrap.appendChild(d);
+          }
+        }
+
+        function go(next) {
+          const { per, spreads, designW } = getCfg();
+          const pages = Math.ceil(SRCS.length / per);
+
+          // Rebuild dots & hide all cards when per changes (breakpoint cross)
+          if (per !== builtPer) {
+            builtPer = per;
+            rebuildDots(pages);
+            gsap.set(phCards, { autoAlpha: 0 });
+            curPage = -1;
+          }
+
+          const prev     = curPage;
+          const oldCards = prev >= 0 ? phCards.slice(prev * per, prev * per + per) : [];
+          const newCards = phCards.slice(next * per, next * per + per);
+          const spread   = getPos(spreads, next, per);
+          const dir      = next >= prev ? 1 : -1;
+          const s        = sc(designW);
+
+          $$('.ph__dot', pDotsWrap).forEach((d, i) => d.classList.toggle('is-active', i === next));
+
+          const tl = gsap.timeline();
+
+          if (oldCards.length) {
+            const oldSpread = getPos(spreads, prev, per);
+            tl.to(oldCards, {
+              x: (i) => (oldSpread[i]?.x || 0) * s + dir * -220 * s,
+              autoAlpha: 0, duration: 0.3, stagger: 0.04, ease: 'power2.in'
+            });
+          }
+
+          tl.set(newCards, {
+            x: (i) => (spread[i]?.x || 0) * s + dir * 240 * s,
+            y: (i) => spread[i]?.y || 0,
+            rotation: (i) => spread[i]?.rot || 0,
+            autoAlpha: 0, zIndex: 2
+          });
+
+          tl.to(newCards, {
+            x: (i) => (spread[i]?.x || 0) * s,
+            autoAlpha: 1, stagger: 0.07, duration: 0.65, ease: 'expo.out'
+          });
+
+          curPage = next;
+        }
+
+        pPrev.addEventListener('click', () => {
+          const { per } = getCfg();
+          go((curPage - 1 + Math.ceil(SRCS.length / per)) % Math.ceil(SRCS.length / per));
+        });
+        pNext.addEventListener('click', () => {
+          const { per } = getCfg();
+          go((curPage + 1) % Math.ceil(SRCS.length / per));
+        });
+
+        window.addEventListener('resize', () => {
+          const { per, spreads, designW } = getCfg();
+          if (per !== builtPer) { go(0); return; }
+          if (curPage < 0) return;
+          const spread = getPos(spreads, curPage, per);
+          const s = sc(designW);
+          phCards.slice(curPage * per, curPage * per + per).forEach((c, i) => {
+            gsap.set(c, { x: (spread[i]?.x || 0) * s, y: spread[i]?.y || 0 });
+          });
+        });
+
+        go(0);
+      }
       /* ── end pill tab bar ── */
 
       const trackWrap = $('[data-vg-wrap]', root);
