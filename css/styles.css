@@ -426,7 +426,7 @@ body.vg-modal-open{overflow:hidden}
   .vg__tab{flex:1;text-align:center;padding:10px 10px;font-size:12px}
   .svc__grid--vid{grid-template-columns:repeat(2,1fr)}
   .svc__grid--photo{grid-template-columns:repeat(2,1fr)}
-  .svc__grid--gfx{grid-template-columns:repeat(2,1fr)}
+  .svc__grid--gfx{grid-template-columns:1fr}
   .banner__stage{grid-template-columns:1fr;clip-path:none}
   .banner__p--r{display:none}
   .ex{grid-template-columns:1fr;gap:6px}
