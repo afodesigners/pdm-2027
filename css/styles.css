@@ -330,23 +330,17 @@ html.lenis,html.lenis body{height:auto}
 .vg-modal__close:hover{background:var(--cyan);transform:scale(1.1)}
 body.vg-modal-open{overflow:hidden}
 
-/* ---------- services (tabs) ---------- */
-.svc{padding-block:clamp(60px,10vw,120px)}
-.svc__hd{margin-bottom:clamp(32px,5vw,56px)}
-.svc__hd .label{display:block;margin-bottom:16px}
-.svc__title{margin-bottom:16px}
-.svc__lead{max-width:52ch;color:rgba(255,255,255,.6)}
+/* ---------- services — pill tab bar (inside vg section) ---------- */
+.vg__tabbar{position:relative;display:inline-flex;background:rgba(9,11,13,.07);border-radius:10px;padding:4px;margin-bottom:clamp(32px,4vw,48px);user-select:none}
+.vg__pill{position:absolute;top:4px;left:4px;height:calc(100% - 8px);border-radius:7px;background:var(--ink);pointer-events:none;will-change:transform,width}
+.vg__tab{position:relative;z-index:1;background:none;border:none;border-radius:7px;padding:12px clamp(18px,2.5vw,32px);font:inherit;font-size:clamp(13px,1.1vw,16px);letter-spacing:.01em;color:rgba(9,11,13,.4);cursor:pointer;transition:color .3s;white-space:nowrap}
+.vg__tab:hover{color:rgba(9,11,13,.7)}
+.vg__tab.is-active{color:#fff}
 
-/* tab bar */
-.svc__tabs{position:relative;display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:40px;user-select:none}
-.svc__tab{background:none;border:none;color:rgba(255,255,255,.45);padding:14px 28px;font:inherit;font-size:clamp(14px,1.2vw,16px);letter-spacing:.03em;cursor:pointer;transition:color .25s;position:relative;z-index:1}
-.svc__tab:hover{color:rgba(255,255,255,.8)}
-.svc__tab.is-active{color:#fff}
-.svc__ink{position:absolute;bottom:-1px;height:2px;background:var(--cyan);border-radius:2px;width:0;left:0;will-change:transform,width;pointer-events:none}
-
-/* panels wrapper — height is driven by JS */
-.svc__panels-wrap{position:relative;overflow:hidden}
-.svc__panel[hidden]{display:none}
+/* panel containers */
+.vg__content{padding-bottom:clamp(40px,6vw,72px)}
+.vg__content[hidden]{display:none}
+.vg__content[data-vgpanel="0"]{padding-bottom:0}
 
 /* grid: videography — 5 portrait cards */
 .svc__grid--vid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
@@ -360,7 +354,7 @@ body.vg-modal-open{overflow:hidden}
 /* graphics — 3 columns per category */
 .svc__cats{display:flex;flex-direction:column;gap:48px}
 .svc__cat-grp{}
-.svc__cat-lbl{display:block;margin-bottom:16px;color:rgba(255,255,255,.4);letter-spacing:.12em}
+.svc__cat-lbl{display:block;margin-bottom:16px;color:rgba(9,11,13,.4);letter-spacing:.12em}
 .svc__grid--gfx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .svc__grid--gfx .svc__thumb{aspect-ratio:16/10}
 

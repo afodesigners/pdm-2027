@@ -622,6 +622,57 @@
     videography() {
       const root      = $('[data-section="videography"]');
       if (!root) return;
+
+      /* ── pill tab bar ── */
+      const tabBar  = $('.vg__tabbar', root);
+      const vgTabs  = $$('.vg__tab', root);
+      const pill    = $('.vg__pill', root);
+      const panels  = $$('[data-vgpanel]', root);
+      let activeTab = 0;
+
+      function slidePill(idx, instant) {
+        const t  = vgTabs[idx];
+        const br = tabBar.getBoundingClientRect();
+        const tr = t.getBoundingClientRect();
+        gsap.to(pill, { x: tr.left - br.left - 4, width: tr.width,
+          duration: instant ? 0 : 0.42, ease: 'power3.out' });
+      }
+      slidePill(0, true);
+
+      function switchVgTab(idx) {
+        if (idx === activeTab) return;
+        vgTabs.forEach((t, i) => {
+          t.classList.toggle('is-active', i === idx);
+          t.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+        });
+        slidePill(idx);
+
+        const from = panels[activeTab];
+        const to   = panels[idx];
+        const toItems = $$('.svc__item', to);
+
+        gsap.to(from, { autoAlpha: 0, y: -10, duration: 0.22, ease: 'power2.in',
+          onComplete() {
+            from.hidden = true;
+            gsap.set(from, { y: 0 });
+            to.hidden = false;
+            gsap.set(to, { autoAlpha: 0, y: 14 });
+            gsap.to(to, { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power3.out' });
+            if (toItems.length) {
+              gsap.fromTo(toItems,
+                { y: 22, autoAlpha: 0 },
+                { y: 0, autoAlpha: 1, stagger: 0.045, duration: 0.48, ease: 'power3.out' }
+              );
+            }
+          }
+        });
+        activeTab = idx;
+      }
+
+      vgTabs.forEach((t, i) => t.addEventListener('click', () => switchVgTab(i)));
+      window.addEventListener('resize', () => slidePill(activeTab, true));
+      /* ── end pill tab bar ── */
+
       const trackWrap = $('[data-vg-wrap]', root);
       const cards     = $$('.vg__card', root);
       const arrowL    = $('.vg__arr--l', root);
@@ -859,95 +910,6 @@
       });
     },
 
-    /* SERVICES — tabbed portfolio: Videography · Photography · Graphics */
-    services() {
-      const root = $('[data-section="services"]');
-      if (!root) return;
-
-      const tabs   = $$('.svc__tab', root);
-      const panels = $$('.svc__panel', root);
-      const ink    = $('.svc__ink', root);
-      const wrap   = $('.svc__panels-wrap', root);
-      const tabBar = $('.svc__tabs', root);
-      let active   = 0;
-
-      /* position sliding ink underline */
-      function slideInk(idx, instant) {
-        const r  = tabs[idx].getBoundingClientRect();
-        const br = tabBar.getBoundingClientRect();
-        gsap.to(ink, { x: r.left - br.left, width: r.width,
-          duration: instant ? 0 : 0.45, ease: 'power3.out' });
-      }
-      slideInk(0, true);
-
-      /* set wrapper height to match current panel */
-      function syncHeight(panel, anim) {
-        const h = panel.scrollHeight;
-        if (anim) gsap.to(wrap, { height: h, duration: 0.4, ease: 'power3.inOut' });
-        else gsap.set(wrap, { height: h });
-      }
-      syncHeight(panels[0]);
-
-      /* tab switch */
-      function switchTab(nextIdx) {
-        if (nextIdx === active) return;
-        const fromPanel = panels[active];
-        const toPanel   = panels[nextIdx];
-        const fromItems = $$('.svc__item', fromPanel);
-        const toItems   = $$('.svc__item', toPanel);
-
-        tabs.forEach((t, i) => {
-          t.classList.toggle('is-active', i === nextIdx);
-          t.setAttribute('aria-selected', i === nextIdx ? 'true' : 'false');
-        });
-        slideInk(nextIdx);
-
-        gsap.set(toItems, { y: 28, autoAlpha: 0 });
-
-        gsap.timeline()
-          .to(fromItems, { y: -18, autoAlpha: 0,
-            stagger: { amount: 0.22, from: 'random' },
-            duration: 0.26, ease: 'power2.in',
-            onComplete() {
-              fromPanel.hidden = true;
-              toPanel.hidden   = false;
-              syncHeight(toPanel, true);
-            }
-          })
-          .to(toItems, { y: 0, autoAlpha: 1,
-            stagger: { amount: 0.55, from: 'start' },
-            duration: 0.5, ease: 'power3.out'
-          }, '-=0.05');
-
-        active = nextIdx;
-      }
-
-      tabs.forEach((t, i) => t.addEventListener('click', () => switchTab(i)));
-
-      /* scroll-entry reveal for heading + tabs */
-      gsap.fromTo([$$('.svc__hd > *', root), tabBar],
-        { y: 32, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, stagger: 0.1, duration: 0.7, ease: 'power3.out',
-          scrollTrigger: { trigger: root, start: 'top 78%', once: true } }
-      );
-
-      /* initial panel items cascade in */
-      gsap.fromTo($$('.svc__item', panels[0]),
-        { y: 28, autoAlpha: 0 },
-        { y: 0, autoAlpha: 1, stagger: 0.06, duration: 0.6, ease: 'power3.out',
-          scrollTrigger: { trigger: root, start: 'top 62%', once: true } }
-      );
-
-      /* video item → open modal */
-      panels[0].querySelectorAll('.svc__item[data-video]').forEach(item => {
-        item.addEventListener('click', () => {
-          if (state.openVideoModal) state.openVideoModal(item.dataset.video);
-        });
-      });
-
-      /* resize: reposition ink */
-      window.addEventListener('resize', () => { slideInk(active, true); syncHeight(panels[active]); });
-    }
   };
 
   /* ---------- 5. BOOT ---------- */
