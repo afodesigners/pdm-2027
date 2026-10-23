@@ -330,6 +330,55 @@ html.lenis,html.lenis body{height:auto}
 .vg-modal__close:hover{background:var(--cyan);transform:scale(1.1)}
 body.vg-modal-open{overflow:hidden}
 
+/* ---------- services (tabs) ---------- */
+.svc{padding-block:clamp(60px,10vw,120px)}
+.svc__hd{margin-bottom:clamp(32px,5vw,56px)}
+.svc__hd .label{display:block;margin-bottom:16px}
+.svc__title{margin-bottom:16px}
+.svc__lead{max-width:52ch;color:rgba(255,255,255,.6)}
+
+/* tab bar */
+.svc__tabs{position:relative;display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:40px;user-select:none}
+.svc__tab{background:none;border:none;color:rgba(255,255,255,.45);padding:14px 28px;font:inherit;font-size:clamp(14px,1.2vw,16px);letter-spacing:.03em;cursor:pointer;transition:color .25s;position:relative;z-index:1}
+.svc__tab:hover{color:rgba(255,255,255,.8)}
+.svc__tab.is-active{color:#fff}
+.svc__ink{position:absolute;bottom:-1px;height:2px;background:var(--cyan);border-radius:2px;width:0;left:0;will-change:transform,width;pointer-events:none}
+
+/* panels wrapper — height is driven by JS */
+.svc__panels-wrap{position:relative;overflow:hidden}
+.svc__panel[hidden]{display:none}
+
+/* grid: videography — 5 portrait cards */
+.svc__grid--vid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.svc__grid--vid .svc__thumb{aspect-ratio:9/16}
+
+/* grid: photography — 4 col masonry-ish */
+.svc__grid--photo{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:start}
+.svc__grid--photo .svc__thumb{aspect-ratio:2/3}
+.svc__grid--photo .svc__item:nth-child(3n+1) .svc__thumb{aspect-ratio:3/4}
+
+/* graphics — 3 columns per category */
+.svc__cats{display:flex;flex-direction:column;gap:48px}
+.svc__cat-grp{}
+.svc__cat-lbl{display:block;margin-bottom:16px;color:rgba(255,255,255,.4);letter-spacing:.12em}
+.svc__grid--gfx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.svc__grid--gfx .svc__thumb{aspect-ratio:16/10}
+
+/* shared item styles */
+.svc__item{position:relative;margin:0;cursor:pointer;overflow:hidden;border-radius:4px}
+.svc__thumb{position:relative;overflow:hidden;border-radius:4px;background:rgba(255,255,255,.04)}
+.svc__thumb img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.svc__item:hover .svc__thumb img{transform:scale(1.04)}
+
+/* play overlay — video tab only */
+.svc__over{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(9,11,13,.38);opacity:0;transition:opacity .3s;border-radius:4px;color:#fff}
+.svc__item:hover .svc__over{opacity:1}
+
+/* caption — video tab */
+.svc__cap{display:flex;flex-direction:column;gap:4px;padding:10px 4px 0}
+.svc__tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.svc__name{font-size:14px;color:rgba(255,255,255,.85);line-height:1.35}
+
 /* ---------- responsive ---------- */
 @media (max-width:1024px){
   .ag{grid-template-columns:50px 1fr 1fr 30px}
@@ -364,6 +413,10 @@ body.vg-modal-open{overflow:hidden}
   .st__img--r{float:right;margin-top:70px}
   .vg__head{flex-direction:column;align-items:flex-start;gap:20px}
   .vg__lead{max-width:none}
+  .svc__tab{padding:12px 16px;font-size:13px}
+  .svc__grid--vid{grid-template-columns:repeat(2,1fr)}
+  .svc__grid--photo{grid-template-columns:repeat(2,1fr)}
+  .svc__grid--gfx{grid-template-columns:repeat(2,1fr)}
   .banner__stage{grid-template-columns:1fr}
   .banner__p--r{display:none}
   .ex{grid-template-columns:1fr;gap:6px}
