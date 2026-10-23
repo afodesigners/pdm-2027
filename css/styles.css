@@ -373,6 +373,15 @@ body.vg-modal-open{overflow:hidden}
 .svc__tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)}
 .svc__name{font-size:14px;color:rgba(255,255,255,.85);line-height:1.35}
 
+/* ---------- about section ---------- */
+.abt__sub{font-size:clamp(15px,1.05vw,17px);line-height:1.72;color:var(--mute-l)}
+.abt__gallery{display:grid;grid-template-columns:1.3fr 1fr 0.7fr;gap:clamp(20px,3vw,48px);align-items:start;margin-top:clamp(48px,7vw,100px)}
+.abt__img{border-radius:4px;overflow:hidden}
+.abt__img--a .pimg{aspect-ratio:3/2}
+.abt__img--b .pimg{aspect-ratio:2/3}
+.abt__qt{display:grid;gap:clamp(24px,3vw,40px);align-self:center}
+.abt__q{font-size:clamp(36px,4vw,60px);line-height:.92;color:var(--ink)}
+
 /* ── photography scatter gallery ── */
 .vg__content[data-vgpanel="1"]{padding-bottom:0}
 .ph__stage{position:relative;height:clamp(500px,70vh,760px);overflow:hidden}
@@ -432,6 +441,8 @@ body.vg-modal-open{overflow:hidden}
   .ex{grid-template-columns:1fr;gap:6px}
   .row{grid-template-columns:1fr}
   .way dl div{grid-template-columns:1fr;gap:4px}
+  .abt__gallery{grid-template-columns:1fr;margin-top:clamp(32px,7vw,60px)}
+  .abt__img--b{display:none}
   .ph__stage{height:clamp(560px,85vh,700px)}
   .ph__card{width:min(78vw,320px)}
   .ph__bg{font-size:clamp(64px,20vw,100px)}
