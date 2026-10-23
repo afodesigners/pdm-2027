@@ -373,8 +373,19 @@ body.vg-modal-open{overflow:hidden}
 .svc__tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)}
 .svc__name{font-size:14px;color:rgba(255,255,255,.85);line-height:1.35}
 
-/* ---------- about section ---------- */
+/* ---------- about / who we are ---------- */
+.abt__info{padding-top:clamp(56px,7vw,100px)}
 .abt__sub{font-size:clamp(15px,1.05vw,17px);line-height:1.72;color:var(--mute-l)}
+/* stat grid — 4 columns, numbers never constrained by a narrow column */
+.abt__stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding-block:clamp(48px,6vw,80px);border-top:1px solid var(--line-l);border-bottom:1px solid var(--line-l);margin-top:clamp(48px,6vw,80px);margin-bottom:clamp(48px,6vw,80px)}
+.abt__stat{padding-left:clamp(16px,2.5vw,40px);border-left:1px solid var(--line-l)}
+.abt__stat:first-child{border-left:0;padding-left:0}
+.abt__stat-n{font-size:clamp(60px,7.5vw,112px);line-height:.88;display:block;white-space:nowrap}
+.abt__stat-n small{font-size:.42em;line-height:1.5;display:inline-block;padding-bottom:.06em;font-family:inherit;vertical-align:bottom}
+.abt__stat-n--w{font-size:clamp(38px,4.8vw,70px);padding-top:6px}
+.abt__stat-l{margin-top:14px}
+.abt__stat-list{margin-top:6px;font-size:14px;color:var(--mute-l);line-height:1.6}
+/* gallery */
 .abt__gallery{display:grid;grid-template-columns:1.3fr 1fr 0.7fr;gap:clamp(20px,3vw,48px);align-items:start;margin-top:clamp(48px,7vw,100px)}
 .abt__img{border-radius:4px;overflow:hidden}
 .abt__img--a .pimg{aspect-ratio:3/2}
@@ -441,6 +452,11 @@ body.vg-modal-open{overflow:hidden}
   .ex{grid-template-columns:1fr;gap:6px}
   .row{grid-template-columns:1fr}
   .way dl div{grid-template-columns:1fr;gap:4px}
+  .abt__stats{grid-template-columns:repeat(2,1fr);gap:clamp(20px,5vw,40px) 0;padding-block:clamp(28px,6vw,48px)}
+  .abt__stat{padding-left:clamp(12px,3vw,20px)}
+  .abt__stat:nth-child(odd){border-left:0;padding-left:0}
+  .abt__stat-n{font-size:clamp(52px,13vw,100px)}
+  .abt__stat-n--w{font-size:clamp(32px,8vw,60px)}
   .abt__gallery{grid-template-columns:1fr;margin-top:clamp(32px,7vw,60px)}
   .abt__img--b{display:none}
   .ph__stage{height:clamp(560px,85vh,700px)}
