@@ -687,18 +687,18 @@
         if (!pStage) return;
 
         const SRCS = [
-          { src: 'assets/img/drv1.jpg',           alt: 'Driver portrait' },
-          { src: 'assets/img/drv2.jpg',            alt: 'Driver portrait' },
-          { src: 'assets/img/banner-l.jpg',        alt: 'Helmet detail' },
-          { src: 'assets/img/med-motorsport.jpg',  alt: 'Motorsport' },
-          { src: 'assets/img/drv3.jpg',            alt: 'Driver portrait' },
-          { src: 'assets/img/kit-1.jpg',           alt: 'Driver in cockpit' },
-          { src: 'assets/img/med-social.jpg',      alt: 'Social lifestyle' },
-          { src: 'assets/img/drv4.jpg',            alt: 'Driver portrait' },
-          { src: 'assets/img/banner-r.jpg',        alt: 'Formula car' },
-          { src: 'assets/img/med-lifestyle.jpg',   alt: 'Lifestyle' },
-          { src: 'assets/img/drv5.jpg',            alt: 'Driver portrait' },
-          { src: 'assets/img/med-brand.jpg',       alt: 'Brand photography' },
+          { src: 'assets/img/p-car-track.jpg',         alt: 'Formula car cornering at circuit' },
+          { src: 'assets/img/p-cockpit-dark.jpg',      alt: 'Driver in cockpit, dramatic lighting' },
+          { src: 'assets/img/p-race-duel.jpg',         alt: 'Two Formula cars racing side by side' },
+          { src: 'assets/img/p-cockpit-orange.jpg',    alt: 'Close-up of driver in orange Formula car cockpit' },
+          { src: 'assets/img/p-car-overhead.jpg',      alt: 'Formula car viewed from above in pit lane' },
+          { src: 'assets/img/p-car-dusk.jpg',          alt: 'Formula car rear view at dusk on circuit' },
+          { src: 'assets/img/p-driver-red.jpg',        alt: 'Driver in red race suit holding steering wheel' },
+          { src: 'assets/img/p-car-rear.jpg',          alt: 'Formula car rear view at circuit with grandstands' },
+          { src: 'assets/img/p-car-var.jpg',           alt: 'Formula car exiting pit lane onto circuit' },
+          { src: 'assets/img/p-team-media.jpg',        alt: 'Media team photographing Formula car in paddock' },
+          { src: 'assets/img/p-car-display.jpg',       alt: 'Formula car on display in paddock tent' },
+          { src: 'assets/img/p-mechanic.jpg',          alt: 'Mechanic working on Formula car at pit wall' },
         ];
 
         // Desktop (≥820px): 5 per page — x/y at 1000px design width
