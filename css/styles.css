@@ -439,14 +439,18 @@ body.vg-modal-open{overflow:hidden}
   .ag{grid-template-columns:50px 1fr 1fr 30px}
   .always{grid-template-columns:1fr}
   .always__r{min-height:60vh}
+  /* drawer: tighten photos column on tablet */
+  .menu-drawer__inner{grid-template-columns:1.2fr 2fr;gap:clamp(16px,2.5vw,40px)}
+  .menu-drawer__nav a{font-size:clamp(40px,5.5vw,80px)}
 }
 @media (max-width:820px){
   :root{--head:68px;--h2:clamp(36px,9.5vw,92px)}
   .logo{width:120px}
-  .menu-drawer__inner{grid-template-columns:1fr}
-  .menu-drawer__photos{display:grid;grid-template-columns:1fr 1fr;position:static;order:2}
+  .menu-drawer__inner{grid-template-columns:1fr;padding-top:calc(var(--head) + 20px);padding-bottom:32px}
+  .menu-drawer__photos{display:grid;grid-template-columns:1fr 1fr;position:static;order:2;margin-top:clamp(20px,4vw,36px)}
   .menu-drawer__content{order:1}
-  .menu-drawer__nav a{font-size:clamp(38px,11vw,60px)}
+  .menu-drawer__foot{flex-direction:column;gap:16px}
+  .menu-drawer__nav a{font-size:clamp(36px,10.5vw,60px)}
   .split,.contact,.ways,.stats,.kit{grid-template-columns:1fr}
   .kit__a{grid-row:auto}
   .hero__cards{grid-template-columns:repeat(5,44vw);overflow-x:auto;scrollbar-width:none;top:calc(var(--head) + 6vh);padding-bottom:20px}
@@ -510,6 +514,9 @@ body.vg-modal-open{overflow:hidden}
   .chips{grid-template-columns:1fr}
   .loader__n{font-size:clamp(52px,16vw,200px)}
   .loader__l{font-size:10px}
+  /* drawer: very small screens */
+  .menu-drawer__nav a{font-size:clamp(30px,9.5vw,48px)}
+  .menu-drawer__photo{aspect-ratio:3/4}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
