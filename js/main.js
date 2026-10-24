@@ -477,16 +477,22 @@
         gsap.to(header, { yPercent: hide ? -100 : 0, duration: 0.5, ease: 'power3.out', overwrite: true });
       }
     });
+    const drawer = $('#menu-drawer');
+    const closeMenu = () => {
+      document.body.classList.remove('menu-open');
+      document.documentElement.classList.remove('menu-open');
+      burger.setAttribute('aria-expanded', 'false');
+      burger.setAttribute('aria-label', 'Open menu');
+      if (drawer) drawer.setAttribute('aria-hidden', 'true');
+    };
     burger.addEventListener('click', () => {
       const open = document.body.classList.toggle('menu-open');
       document.documentElement.classList.toggle('menu-open', open);
       burger.setAttribute('aria-expanded', open);
       burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if (drawer) drawer.setAttribute('aria-hidden', !open);
     });
-    $$('.nav a').forEach((a) => a.addEventListener('click', () => {
-      document.body.classList.remove('menu-open'); document.documentElement.classList.remove('menu-open');
-      burger.setAttribute('aria-expanded', 'false');
-    }));
+    $$('.menu-drawer__nav a').forEach((a) => a.addEventListener('click', closeMenu));
   }
 
   /* ---------- 4. SECTIONS ---------- */

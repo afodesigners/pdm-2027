@@ -46,15 +46,44 @@
     <span class="logo__ch logo__ch--r" aria-hidden="true"></span>
     <span class="logo__ch logo__ch--c" aria-hidden="true"></span>
   </a>
-  <nav class="nav" id="nav" aria-label="Main">
-    <a href="#about">About us</a>
-    <a href="#videography">Services</a>
-    <a href="#">Ambassador</a>
-    <a href="#contact">Contact us</a>
-    <a class="btn btn--ghost nav__cta" href="#contact" data-magnetic>Enquire for 2027 <span class="arr" aria-hidden="true">↗</span></a>
-  </nav>
-  <button class="burger" id="burger" aria-expanded="false" aria-controls="nav" aria-label="Open menu"><i></i><i></i></button>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="menu-drawer" aria-label="Open menu"><i></i><i></i></button>
 </header>
+
+<!-- ============================== MENU DRAWER ============================== -->
+<div class="menu-drawer" id="menu-drawer" role="dialog" aria-modal="true" aria-label="Main menu" aria-hidden="true">
+  <div class="menu-drawer__inner wrap">
+    <div class="menu-drawer__photos" aria-hidden="true">
+      <figure class="menu-drawer__photo">
+        <img src="assets/img/drv1.jpg" alt="" width="800" height="1200" loading="lazy">
+      </figure>
+      <figure class="menu-drawer__photo">
+        <img src="assets/img/drv3.jpg" alt="" width="800" height="1200" loading="lazy">
+      </figure>
+    </div>
+    <div class="menu-drawer__content">
+      <nav class="menu-drawer__nav" aria-label="Main">
+        <a href="#about">About us</a>
+        <a href="#videography">Services</a>
+        <a href="#">Ambassador</a>
+        <a href="#contact">Contact us</a>
+      </nav>
+      <div class="menu-drawer__foot">
+        <div class="menu-drawer__reach">
+          <span class="label">Reach us directly</span>
+          <a class="menu-drawer__email" href="mailto:hello@pdmmotorsport.com">hello@pdmmotorsport.com</a>
+        </div>
+        <div class="menu-drawer__socials">
+          <span class="label">Follow PDM</span>
+          <div class="menu-drawer__social-links">
+            <a href="#">Instagram</a>
+            <a href="#">TikTok</a>
+            <a href="#">YouTube</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <main id="main">
 
