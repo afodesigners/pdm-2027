@@ -425,14 +425,21 @@ body.vg-modal-open{overflow:hidden}
 .ph__stage{position:relative;height:clamp(500px,70vh,760px);overflow:hidden}
 .ph__bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(80px,13vw,186px);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(9,11,13,.055);text-transform:uppercase;letter-spacing:-.02em;user-select:none;pointer-events:none;white-space:nowrap;z-index:0}
 .ph__scatter{position:absolute;inset:0;z-index:1}
-.ph__card{position:absolute;top:50%;left:50%;width:clamp(195px,20vw,300px);border-radius:2px;overflow:hidden;cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,.14),0 1px 4px rgba(0,0,0,.06);will-change:transform;margin:0}
+.ph__card{position:absolute;top:50%;left:50%;width:clamp(195px,20vw,300px);border-radius:2px;overflow:hidden;cursor:zoom-in;box-shadow:0 4px 24px rgba(0,0,0,.14),0 1px 4px rgba(0,0,0,.06);will-change:transform;margin:0}
 .ph__card img{display:block;width:100%;height:auto;pointer-events:none;aspect-ratio:2/3;object-fit:cover}
 .ph__nav{position:absolute;bottom:28px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:20px;z-index:3}
 .ph__btn{background:none;border:1px solid rgba(9,11,13,.18);border-radius:4px;width:42px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);transition:border-color .2s,background .2s,color .2s}
 .ph__btn:hover{border-color:var(--ink);background:var(--ink);color:#fff}
-.ph__dots{display:flex;gap:10px;align-items:center}
-.ph__dot{width:6px;height:6px;border-radius:50%;background:rgba(9,11,13,.18);border:none;cursor:pointer;padding:0;transition:background .25s,transform .25s}
-.ph__dot.is-active{background:var(--ink);transform:scale(1.5)}
+.ph__dots{display:flex;gap:8px;align-items:center;min-width:52px;justify-content:center}
+.ph__dot{width:6px;height:6px;border-radius:50%;background:rgba(9,11,13,.18);border:none;cursor:pointer;padding:0;transition:background .2s}
+.ph__dot.is-active{background:var(--ink)}
+/* ── lightbox ── */
+.ph__lightbox{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s,visibility .35s;cursor:zoom-out}
+.ph__lightbox.is-open{opacity:1;visibility:visible;pointer-events:auto}
+.ph__lb-close{position:absolute;top:20px;right:20px;width:44px;height:44px;display:grid;place-items:center;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:50%;cursor:pointer;transition:background .2s,border-color .2s;z-index:1}
+.ph__lb-close:hover{background:rgba(255,255,255,.15);border-color:#fff}
+.ph__lb-fig{max-width:min(90vw,920px);max-height:92vh;cursor:default}
+.ph__lb-img{display:block;width:100%;height:100%;object-fit:contain;border-radius:2px}
 
 /* ---------- responsive ---------- */
 @media (max-width:1024px){
@@ -490,8 +497,8 @@ body.vg-modal-open{overflow:hidden}
   .abt__stat-n--w{font-size:clamp(32px,8vw,60px)}
   .abt__gallery{grid-template-columns:1fr;margin-top:clamp(32px,7vw,60px)}
   .abt__img--b{display:none}
-  .ph__stage{height:clamp(560px,85vh,700px)}
-  .ph__card{width:min(78vw,320px)}
+  .ph__stage{height:clamp(520px,82vh,680px)}
+  .ph__card{width:min(66vw,280px)}
   .ph__bg{font-size:clamp(64px,20vw,100px)}
   .always__l .h2{font-size:clamp(28px,9.3vw,76px)}
   .always__r{min-height:48vh}

@@ -690,6 +690,9 @@
         const pDotsWrap = $('[data-ph-dots]', root);
         const pPrev     = $('.ph__btn--p', root);
         const pNext     = $('.ph__btn--n', root);
+        const pLightbox = $('[data-ph-lightbox]', root);
+        const pLbImg    = pLightbox && pLightbox.querySelector('.ph__lb-img');
+        const pLbClose  = pLightbox && pLightbox.querySelector('.ph__lb-close');
         if (!pStage) return;
 
         const SRCS = [
@@ -706,8 +709,9 @@
           { src: 'assets/img/p-car-display.jpg',       alt: 'Formula car on display in paddock tent' },
           { src: 'assets/img/p-mechanic.jpg',          alt: 'Mechanic working on Formula car at pit wall' },
         ];
+        const N = SRCS.length;
 
-        // Desktop (≥820px): 5 per page — x/y at 1000px design width
+        // Desktop: 5 per page, scattered positions (design width 1000px)
         const D_SPREADS = [
           [
             { x:-440, y: 14, rot: -9 }, { x:-215, y:-20, rot:  5 },
@@ -722,16 +726,40 @@
             { x:   5, y: 20, rot:  4 }, { x: 218, y:-22, rot: -8 }, { x: 440, y: 16, rot: 11 },
           ],
         ];
-        // Mobile (<820px): 1 per page — centred with slight rotation variety
-        const M_ROTS   = [-4, 3, -2, 5, -3, 2, -5, 4, -2, 3, -4, 2];
-        const M_SPREADS = SRCS.map((_, i) => [{ x: 0, y: -12, rot: M_ROTS[i] }]);
+
+        // Mobile: stacked deck — front / mid / back
+        const STACK = [
+          { x:  0, y:  0, rot: -3, scale: 1.00, alpha: 1.00, z: 12 },
+          { x: 28, y: 10, rot:  7, scale: 0.93, alpha: 0.85, z:  8 },
+          { x: 48, y: 20, rot: 13, scale: 0.86, alpha: 0.65, z:  4 },
+        ];
 
         let curPage  = -1;
         let builtPer = 0;
+        let animating = false;
         let phCards  = [];
 
-        // Build all card elements once
-        SRCS.forEach(({ src, alt }) => {
+        // Lightbox
+        function openLightbox(idx) {
+          if (!pLightbox || !pLbImg) return;
+          pLbImg.src = SRCS[idx].src;
+          pLbImg.alt = SRCS[idx].alt;
+          pLightbox.setAttribute('aria-hidden', 'false');
+          pLightbox.classList.add('is-open');
+          document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+          if (!pLightbox) return;
+          pLightbox.classList.remove('is-open');
+          pLightbox.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+        }
+        if (pLbClose) pLbClose.addEventListener('click', closeLightbox);
+        if (pLightbox) pLightbox.addEventListener('click', (e) => { if (e.target === pLightbox) closeLightbox(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+        // Build card elements
+        SRCS.forEach(({ src, alt }, idx) => {
           const fig = document.createElement('figure');
           fig.className = 'ph__card';
           const img = document.createElement('img');
@@ -739,17 +767,20 @@
           fig.appendChild(img);
           pScatter.appendChild(fig);
           gsap.set(fig, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
+          fig.addEventListener('click', () => openLightbox(idx));
           phCards.push(fig);
         });
 
-        // Hover: lift & straighten
+        // Desktop hover: lift & straighten
         phCards.forEach((c, i) => {
           c.addEventListener('pointerenter', () => {
+            if (getCfg().per === 1) return;
             gsap.to(c, { scale: 1.06, rotation: 0, zIndex: 10, duration: 0.38,
               ease: 'power3.out', boxShadow: '0 22px 60px rgba(0,0,0,.22)' });
           });
           c.addEventListener('pointerleave', () => {
             const { per, spreads } = getCfg();
+            if (per === 1) return;
             const pg = Math.floor(i / per);
             if (pg !== curPage) return;
             const pos = getPos(spreads, pg, per)[i % per];
@@ -760,16 +791,15 @@
 
         function getCfg() {
           return window.innerWidth < 820
-            ? { per: 1, spreads: M_SPREADS, designW: 375  }
+            ? { per: 1, spreads: null, designW: 375 }
             : { per: 5, spreads: D_SPREADS, designW: 1000 };
         }
 
         function sc(designW) { return Math.min(1, (pStage.offsetWidth - 60) / designW); }
 
-        // If fewer cards than spread positions, use centred subset
         function getPos(spreads, pageIdx, per) {
           const spread = spreads[pageIdx % spreads.length];
-          const count  = Math.min(per, SRCS.length - pageIdx * per);
+          const count  = Math.min(per, N - pageIdx * per);
           if (count >= spread.length) return spread;
           const start = Math.floor((spread.length - count) / 2);
           return spread.slice(start, start + count);
@@ -779,72 +809,139 @@
           pDotsWrap.innerHTML = '';
           for (let i = 0; i < pages; i++) {
             const d = document.createElement('button');
-            d.className = 'ph__dot' + (i === 0 ? ' is-active' : '');
-            d.setAttribute('aria-label', `Photo set ${i + 1} of ${pages}`);
-            d.addEventListener('click', () => go(i));
+            d.className = 'ph__dot';
+            d.setAttribute('aria-label', `Photo ${i + 1} of ${pages}`);
+            d.addEventListener('click', () => { if (!animating) go(i); });
             pDotsWrap.appendChild(d);
           }
         }
 
-        function go(next) {
-          const { per, spreads, designW } = getCfg();
-          const pages = Math.ceil(SRCS.length / per);
+        // Sliding window: always shows 3 dots, active one centred when possible
+        function updateDots(active, total) {
+          const WIN = 3;
+          const half = Math.floor(WIN / 2);
+          const wStart = Math.max(0, Math.min(active - half, total - WIN));
+          const wEnd   = Math.min(total - 1, wStart + WIN - 1);
+          $$('.ph__dot', pDotsWrap).forEach((d, i) => {
+            const inWin = i >= wStart && i <= wEnd;
+            d.style.display = inWin ? '' : 'none';
+            d.classList.toggle('is-active', i === active);
+            if (inWin) {
+              const dist = Math.abs(i - active);
+              gsap.to(d, { scale: dist === 0 ? 1.6 : 0.7, opacity: dist === 0 ? 1 : 0.45, duration: 0.25 });
+            }
+          });
+        }
 
-          // Rebuild dots & hide all cards when per changes (breakpoint cross)
-          if (per !== builtPer) {
-            builtPer = per;
-            rebuildDots(pages);
-            gsap.set(phCards, { autoAlpha: 0 });
-            curPage = -1;
+        // ── Mobile: stacked deck ──────────────────────────────────────────────
+        function setStack(cardIdx, stackIdx, animate) {
+          const c = phCards[((cardIdx % N) + N) % N];
+          const p = STACK[stackIdx];
+          const props = { x: p.x, y: p.y, rotation: p.rot, scale: p.scale, autoAlpha: p.alpha, zIndex: p.z };
+          if (animate) gsap.to(c, { ...props, duration: 0.52, ease: 'expo.out' });
+          else         gsap.set(c, props);
+        }
+
+        function goMobile(next) {
+          const pages = N;
+          updateDots(next, pages);
+
+          if (curPage === -1) {
+            // Initial render: place first 3 in the stack, hide the rest
+            for (let i = 0; i < 3; i++) setStack(next + i, i, false);
+            phCards.forEach((c, i) => { if (i >= 3) gsap.set(c, { autoAlpha: 0 }); });
+            curPage = next;
+            animating = false;
+            return;
           }
 
-          const prev     = curPage;
+          const diff = ((next - curPage) % N + N) % N;
+          const fwd  = diff <= N / 2;
+          const fi   = curPage,       mi = (curPage + 1) % N, bi = (curPage + 2) % N;
+          const tl   = gsap.timeline({ onComplete: () => { animating = false; } });
+          animating  = true;
+
+          if (fwd) {
+            const incoming = (curPage + 3) % N;
+            tl.to(phCards[fi], { x: -420, autoAlpha: 0, rotation: -18, scale: 0.88, duration: 0.36, ease: 'power2.in' });
+            tl.to(phCards[mi], { x: STACK[0].x, y: STACK[0].y, rotation: STACK[0].rot, scale: STACK[0].scale, autoAlpha: STACK[0].alpha, zIndex: STACK[0].z, duration: 0.52, ease: 'expo.out' }, '<0.08');
+            tl.to(phCards[bi], { x: STACK[1].x, y: STACK[1].y, rotation: STACK[1].rot, scale: STACK[1].scale, autoAlpha: STACK[1].alpha, zIndex: STACK[1].z, duration: 0.52, ease: 'expo.out' }, '<');
+            tl.set(phCards[incoming], { x: STACK[2].x + 32, y: STACK[2].y, rotation: STACK[2].rot + 6, scale: STACK[2].scale, autoAlpha: 0, zIndex: STACK[2].z }, '<0.12');
+            tl.to(phCards[incoming],  { x: STACK[2].x, autoAlpha: STACK[2].alpha, duration: 0.38, ease: 'expo.out' }, '<');
+          } else {
+            const incoming = ((curPage - 1) % N + N) % N;
+            tl.to(phCards[bi], { x: STACK[2].x + 24, autoAlpha: 0, duration: 0.26, ease: 'power2.in' });
+            tl.to(phCards[mi], { x: STACK[2].x, y: STACK[2].y, rotation: STACK[2].rot, scale: STACK[2].scale, autoAlpha: STACK[2].alpha, zIndex: STACK[2].z, duration: 0.5, ease: 'expo.out' }, '<0.04');
+            tl.to(phCards[fi], { x: STACK[1].x, y: STACK[1].y, rotation: STACK[1].rot, scale: STACK[1].scale, autoAlpha: STACK[1].alpha, zIndex: STACK[1].z, duration: 0.5, ease: 'expo.out' }, '<');
+            tl.set(phCards[incoming], { x: -360, y: 0, rotation: -18, scale: 1, autoAlpha: 0, zIndex: STACK[0].z }, '<');
+            tl.to(phCards[incoming],  { x: STACK[0].x, y: STACK[0].y, rotation: STACK[0].rot, scale: STACK[0].scale, autoAlpha: STACK[0].alpha, duration: 0.5, ease: 'expo.out' }, '<');
+          }
+
+          curPage = next;
+        }
+
+        // ── Desktop: scatter gallery ──────────────────────────────────────────
+        function goDesktop(next, per, spreads, designW) {
+          const pages = Math.ceil(N / per);
+          const prev  = curPage;
           const oldCards = prev >= 0 ? phCards.slice(prev * per, prev * per + per) : [];
           const newCards = phCards.slice(next * per, next * per + per);
           const spread   = getPos(spreads, next, per);
           const dir      = next >= prev ? 1 : -1;
           const s        = sc(designW);
 
-          $$('.ph__dot', pDotsWrap).forEach((d, i) => d.classList.toggle('is-active', i === next));
+          updateDots(next, pages);
 
-          const tl = gsap.timeline();
+          const tl = gsap.timeline({ onComplete: () => { animating = false; } });
+          animating = true;
 
           if (oldCards.length) {
             const oldSpread = getPos(spreads, prev, per);
-            tl.to(oldCards, {
-              x: (i) => (oldSpread[i]?.x || 0) * s + dir * -220 * s,
-              autoAlpha: 0, duration: 0.3, stagger: 0.04, ease: 'power2.in'
-            });
+            tl.to(oldCards, { x: (i) => (oldSpread[i]?.x || 0) * s + dir * -220 * s,
+              autoAlpha: 0, duration: 0.3, stagger: 0.04, ease: 'power2.in' });
           }
-
-          tl.set(newCards, {
-            x: (i) => (spread[i]?.x || 0) * s + dir * 240 * s,
-            y: (i) => spread[i]?.y || 0,
-            rotation: (i) => spread[i]?.rot || 0,
-            autoAlpha: 0, zIndex: 2
-          });
-
-          tl.to(newCards, {
-            x: (i) => (spread[i]?.x || 0) * s,
-            autoAlpha: 1, stagger: 0.07, duration: 0.65, ease: 'expo.out'
-          });
+          tl.set(newCards, { x: (i) => (spread[i]?.x || 0) * s + dir * 240 * s,
+            y: (i) => spread[i]?.y || 0, rotation: (i) => spread[i]?.rot || 0,
+            autoAlpha: 0, zIndex: 2 });
+          tl.to(newCards, { x: (i) => (spread[i]?.x || 0) * s,
+            autoAlpha: 1, stagger: 0.07, duration: 0.65, ease: 'expo.out' });
 
           curPage = next;
         }
 
+        // ── Router ────────────────────────────────────────────────────────────
+        function go(next) {
+          const { per, spreads, designW } = getCfg();
+          const pages = Math.ceil(N / per);
+
+          if (per !== builtPer) {
+            builtPer = per;
+            rebuildDots(pages);
+            gsap.set(phCards, { autoAlpha: 0 });
+            curPage  = -1;
+            animating = false;
+          }
+
+          if (per === 1) goMobile(next);
+          else           goDesktop(next, per, spreads, designW);
+        }
+
         pPrev.addEventListener('click', () => {
+          if (animating) return;
           const { per } = getCfg();
-          go((curPage - 1 + Math.ceil(SRCS.length / per)) % Math.ceil(SRCS.length / per));
+          const pages = Math.ceil(N / per);
+          go(((curPage - 1) % pages + pages) % pages);
         });
         pNext.addEventListener('click', () => {
+          if (animating) return;
           const { per } = getCfg();
-          go((curPage + 1) % Math.ceil(SRCS.length / per));
+          go((curPage + 1) % Math.ceil(N / per));
         });
 
         window.addEventListener('resize', () => {
           const { per, spreads, designW } = getCfg();
           if (per !== builtPer) { go(0); return; }
-          if (curPage < 0) return;
+          if (curPage < 0 || per === 1) return;
           const spread = getPos(spreads, curPage, per);
           const s = sc(designW);
           phCards.slice(curPage * per, curPage * per + per).forEach((c, i) => {
