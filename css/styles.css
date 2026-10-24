@@ -252,8 +252,15 @@ html.lenis,html.lenis body{height:auto}
 .tags__in i{font-style:normal;color:var(--cyan-d);font-size:.6em;padding-right:.8em;display:inline-block;vertical-align:.2em}
 
 /* ---------- contact ---------- */
-.contact{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(32px,6vw,110px);margin-top:clamp(40px,5vw,72px);align-items:start}
+.contact__hd{display:flex;align-items:center;gap:20px;margin-bottom:clamp(32px,4vw,56px)}
+.contact__rule{flex:1;height:1px;background:var(--line-d)}
+.contact{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(32px,6vw,110px);align-items:start}
 .contact__l{display:grid;gap:30px}
+.contact__reach{display:grid;gap:10px;padding-top:8px;border-top:1px solid var(--line-d)}
+.contact__email{font-size:15px;color:var(--cyan);text-decoration:none;transition:opacity .2s}
+.contact__email:hover{opacity:.75}
+.contact__r{display:grid;gap:18px}
+.contact__form-label{padding-bottom:0}
 .form{display:grid;gap:26px}
 .form fieldset{border:0}
 .form legend{font-size:15px;margin-bottom:12px}

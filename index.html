@@ -433,33 +433,44 @@
 <!-- ============================== 09 CONTACT (dark) ============================== -->
 <section class="sec sec--dark sec--pad" id="contact" data-section="contact">
   <div class="wrap">
+    <div class="contact__hd" data-reveal="fade">
+      <p class="label label--c">Contact us</p>
+      <div class="contact__rule"></div>
+    </div>
     <div class="contact">
       <div class="contact__l">
         <p class="label label--c" data-reveal="fade">A limited roster. A personal approach.</p>
         <h2 class="d h2 h2--xl" data-split="words">Become part<br>of PDM 2027.</h2>
         <p class="lead lead--dim" data-split="lines">Tell us where you’re racing and what you want your season to look like.</p>
+        <div class="contact__reach" data-reveal="up">
+          <p class="label">Or reach us directly</p>
+          <a class="contact__email" href="mailto:hello@pdmmotorsport.com">hello@pdmmotorsport.com</a>
+        </div>
       </div>
-      <form class="form" id="form" novalidate data-stagger>
-        <fieldset data-reveal="up">
-          <legend>I’m interested in</legend>
-          <div class="chips">
-            <label class="chip"><input type="radio" name="interest" value="Signature" checked><span>Signature</span></label>
-            <label class="chip"><input type="radio" name="interest" value="Race Weekend"><span>Race Weekend</span></label>
-            <label class="chip"><input type="radio" name="interest" value="Bespoke"><span>Bespoke</span></label>
+      <div class="contact__r">
+        <p class="label contact__form-label" data-reveal="fade">Send a message</p>
+        <form class="form" id="form" novalidate data-stagger>
+          <fieldset data-reveal="up">
+            <legend>I’m interested in</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="interest" value="Signature" checked><span>Signature</span></label>
+              <label class="chip"><input type="radio" name="interest" value="Race Weekend"><span>Race Weekend</span></label>
+              <label class="chip"><input type="radio" name="interest" value="Bespoke"><span>Bespoke</span></label>
+            </div>
+          </fieldset>
+          <div class="row" data-reveal="up">
+            <label class="fld"><span>Your name</span><input id="f-name" name="name" type="text" autocomplete="name" placeholder="Name" required></label>
+            <label class="fld"><span>Email address</span><input id="f-email" name="email" type="email" autocomplete="email" placeholder="Email" required></label>
           </div>
-        </fieldset>
-        <div class="row" data-reveal="up">
-          <label class="fld"><span>Your name</span><input id="f-name" name="name" type="text" autocomplete="name" placeholder="Name" required></label>
-          <label class="fld"><span>Email address</span><input id="f-email" name="email" type="email" autocomplete="email" placeholder="Email" required></label>
-        </div>
-        <label class="fld" data-reveal="up"><span>Championship / racing plans</span><input id="f-plans" name="plans" type="text" placeholder="Where will you be racing in 2027?"></label>
-        <label class="fld" data-reveal="up"><span>What are you looking for?</span><textarea id="f-msg" name="message" rows="4" placeholder="Tell us about your goals, your media and your season."></textarea></label>
-        <div data-reveal="up">
-          <button class="btn btn--solid" type="submit" data-magnetic>Send enquiry <span class="arr" aria-hidden="true">↗</span></button>
-          <p class="form__msg" id="formMsg" role="status" aria-live="polite"></p>
-          <p class="fine fine--d">An enquiry starts a conversation and does not confirm programme availability.</p>
-        </div>
-      </form>
+          <label class="fld" data-reveal="up"><span>Championship / racing plans</span><input id="f-plans" name="plans" type="text" placeholder="Where will you be racing in 2027?"></label>
+          <label class="fld" data-reveal="up"><span>What are you looking for?</span><textarea id="f-msg" name="message" rows="4" placeholder="Tell us about your goals, your media and your season."></textarea></label>
+          <div data-reveal="up">
+            <button class="btn btn--solid" type="submit" data-magnetic>Send enquiry <span class="arr" aria-hidden="true">↗</span></button>
+            <p class="form__msg" id="formMsg" role="status" aria-live="polite"></p>
+            <p class="fine fine--d">An enquiry starts a conversation and does not confirm programme availability.</p>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </section>
