@@ -938,6 +938,18 @@
           go((curPage + 1) % Math.ceil(N / per));
         });
 
+        let touchStartX = 0;
+        pStage.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        pStage.addEventListener('touchend', (e) => {
+          if (animating) return;
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          if (Math.abs(dx) < 40) return;
+          const { per } = getCfg();
+          const pages = Math.ceil(N / per);
+          if (dx < 0) go((curPage + 1) % pages);
+          else        go(((curPage - 1) % pages + pages) % pages);
+        }, { passive: true });
+
         window.addEventListener('resize', () => {
           const { per, spreads, designW } = getCfg();
           if (per !== builtPer) { go(0); return; }
