@@ -938,10 +938,22 @@
           go((curPage + 1) % Math.ceil(N / per));
         });
 
-        let touchStartX = 0;
-        pStage.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        let touchStartX = 0, touchStartY = 0, swipeLocked = false;
+        pStage.addEventListener('touchstart', (e) => {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          swipeLocked = false;
+        }, { passive: true });
+        pStage.addEventListener('touchmove', (e) => {
+          const dx = e.touches[0].clientX - touchStartX;
+          const dy = e.touches[0].clientY - touchStartY;
+          if (!swipeLocked && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+            swipeLocked = true;
+          }
+          if (swipeLocked) e.preventDefault();
+        }, { passive: false });
         pStage.addEventListener('touchend', (e) => {
-          if (animating) return;
+          if (animating || !swipeLocked) return;
           const dx = e.changedTouches[0].clientX - touchStartX;
           if (Math.abs(dx) < 40) return;
           const { per } = getCfg();
