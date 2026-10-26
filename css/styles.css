@@ -451,9 +451,13 @@ body.vg-modal-open{overflow:hidden}
 .amb__card.is-active .amb__fig::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px var(--cyan);pointer-events:none}
 .amb__info{padding:clamp(12px,1.4vw,18px) 0 0}
 .amb__series{margin-bottom:6px}
-.amb__name{font-size:clamp(20px,2vw,30px);line-height:1;margin-bottom:8px}
-.amb__ig{display:inline-block;color:var(--cyan);font-family:var(--mono);font-size:11px;letter-spacing:.01em;transition:color .2s}
+.amb__name{font-size:clamp(20px,2vw,30px);line-height:1;margin-bottom:6px}
+.amb__team{color:var(--mute-d);margin-bottom:4px}
+.amb__achieve{font-size:11px;color:var(--mute-d);line-height:1.45;margin-bottom:10px;font-family:var(--stereo);letter-spacing:.03em;text-transform:uppercase}
+.amb__ig{display:inline-flex;align-items:center;gap:5px;color:var(--cyan);font-family:var(--stereo);font-size:11px;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
+.amb__ig svg{flex-shrink:0;opacity:.85}
 .amb__ig:hover{color:#fff}
+.amb__ig:hover svg{opacity:1}
 
 /* ---------- responsive ---------- */
 @media (max-width:1024px){
