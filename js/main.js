@@ -1190,6 +1190,51 @@
       measure(); snapTo(0, true);
     },
 
+    /* AMBASSADORS — horizontal drag-scroll track, B&W → colour on hover / click */
+    ambassadors() {
+      const root = $('[data-section="ambassadors"]');
+      if (!root) return;
+      const track = $('.amb__track', root);
+      const cards = $$('.amb__card', root);
+
+      // click toggles colour-lock (.is-active); clicking same card again deactivates
+      cards.forEach((card) => {
+        card.addEventListener('click', (e) => {
+          if (card._dragged) return;
+          const wasActive = card.classList.contains('is-active');
+          cards.forEach((c) => c.classList.remove('is-active'));
+          if (!wasActive) card.classList.add('is-active');
+        });
+      });
+
+      // drag-to-scroll (desktop mouse)
+      let dragging = false, dragStartX, dragScrollLeft, dragMoved = false;
+      track.addEventListener('mousedown', (e) => {
+        dragging = true; dragMoved = false;
+        dragStartX = e.pageX - track.offsetLeft;
+        dragScrollLeft = track.scrollLeft;
+        track.classList.add('is-grabbing');
+      });
+      window.addEventListener('mouseup', () => { dragging = false; track.classList.remove('is-grabbing'); });
+      track.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        e.preventDefault();
+        const dx = e.pageX - track.offsetLeft - dragStartX;
+        if (Math.abs(dx) > 6) { dragMoved = true; cards.forEach((c) => { c._dragged = true; }); }
+        track.scrollLeft = dragScrollLeft - dx * 1.5;
+      });
+      track.addEventListener('click', () => {
+        requestAnimationFrame(() => cards.forEach((c) => { c._dragged = false; }));
+      }, true);
+
+      // scroll-in reveal
+      gsap.set(cards, { autoAlpha: 0, y: 36 });
+      ScrollTrigger.create({
+        trigger: root, start: 'top 76%', once: true,
+        onEnter: () => gsap.to(cards, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1, ease: CFG.ease }),
+      });
+    },
+
     /* CONTACT — chips, validation, submit feedback. Replace the fake send with your endpoint / form plugin. */
     contact() {
       const form = $('#form'), msg = $('#formMsg');
