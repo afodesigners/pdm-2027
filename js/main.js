@@ -1190,48 +1190,59 @@
       measure(); snapTo(0, true);
     },
 
-    /* AMBASSADORS — horizontal drag-scroll track, B&W → colour on hover / click */
+    /* AMBASSADORS — GSAP-pinned horizontal scroll (desktop); native overflow scroll (mobile) */
     ambassadors() {
       const root = $('[data-section="ambassadors"]');
       if (!root) return;
       const track = $('.amb__track', root);
       const cards = $$('.amb__card', root);
 
-      // click toggles colour-lock (.is-active); clicking same card again deactivates
+      // click toggles colour-lock; same card again releases it
       cards.forEach((card) => {
-        card.addEventListener('click', (e) => {
-          if (card._dragged) return;
+        card.addEventListener('click', () => {
           const wasActive = card.classList.contains('is-active');
           cards.forEach((c) => c.classList.remove('is-active'));
           if (!wasActive) card.classList.add('is-active');
         });
       });
 
-      // drag-to-scroll (desktop mouse)
-      let dragging = false, dragStartX, dragScrollLeft, dragMoved = false;
-      track.addEventListener('mousedown', (e) => {
-        dragging = true; dragMoved = false;
-        dragStartX = e.pageX - track.offsetLeft;
-        dragScrollLeft = track.scrollLeft;
-        track.classList.add('is-grabbing');
-      });
-      window.addEventListener('mouseup', () => { dragging = false; track.classList.remove('is-grabbing'); });
-      track.addEventListener('mousemove', (e) => {
-        if (!dragging) return;
-        e.preventDefault();
-        const dx = e.pageX - track.offsetLeft - dragStartX;
-        if (Math.abs(dx) > 6) { dragMoved = true; cards.forEach((c) => { c._dragged = true; }); }
-        track.scrollLeft = dragScrollLeft - dx * 1.5;
-      });
-      track.addEventListener('click', () => {
-        requestAnimationFrame(() => cards.forEach((c) => { c._dragged = false; }));
-      }, true);
+      const mm = gsap.matchMedia();
 
-      // scroll-in reveal
-      gsap.set(cards, { autoAlpha: 0, y: 36 });
-      ScrollTrigger.create({
-        trigger: root, start: 'top 76%', once: true,
-        onEnter: () => gsap.to(cards, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1, ease: CFG.ease }),
+      mm.add(CFG.desktop, () => {
+        // Pin the section; translate the track left as user scrolls down
+        const travelDist = () => track.scrollWidth - document.documentElement.clientWidth;
+
+        const tween = gsap.to(track, {
+          x: () => -travelDist(),
+          ease: 'none',
+        });
+
+        ScrollTrigger.create({
+          trigger: root,
+          animation: tween,
+          pin: true,
+          scrub: 1,
+          start: 'top top',
+          end: () => '+=' + travelDist(),
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+        });
+
+        // stagger cards in as section enters the viewport
+        gsap.set(cards, { autoAlpha: 0, y: 28 });
+        ScrollTrigger.create({
+          trigger: root, start: 'top 80%', once: true,
+          onEnter: () => gsap.to(cards, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.1, ease: CFG.ease }),
+        });
+      });
+
+      mm.add('(max-width: 820px)', () => {
+        // Mobile: native scroll, staggered reveal
+        gsap.set(cards, { autoAlpha: 0, y: 28 });
+        ScrollTrigger.create({
+          trigger: root, start: 'top 76%', once: true,
+          onEnter: () => gsap.to(cards, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1, ease: CFG.ease }),
+        });
       });
     },
 
