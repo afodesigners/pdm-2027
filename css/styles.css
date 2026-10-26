@@ -442,7 +442,7 @@ body.vg-modal-open{overflow:hidden}
 .ph__lb-img{display:block;width:100%;height:100%;object-fit:contain;border-radius:2px}
 
 /* === AMBASSADORS === */
-.amb__track-wrap{overflow:hidden;margin-top:clamp(36px,5vw,64px)}
+.amb__track-wrap{overflow:hidden;margin-top:clamp(24px,3vw,40px)}
 .amb__track{display:flex;gap:clamp(14px,1.8vw,24px);padding:0 var(--gut) clamp(28px,4vw,48px);list-style:none;will-change:transform}
 .amb__card{flex:0 0 clamp(240px,28vw,420px);position:relative}
 .amb__fig{aspect-ratio:3/4;overflow:hidden;background:var(--ink-2);position:relative}
@@ -453,7 +453,7 @@ body.vg-modal-open{overflow:hidden}
 .amb__series{margin-bottom:6px}
 .amb__name{font-size:clamp(20px,2vw,30px);line-height:1;margin-bottom:6px}
 .amb__team{color:var(--mute-d);margin-bottom:4px}
-.amb__achieve{font-size:11px;color:var(--mute-d);line-height:1.45;margin-bottom:10px;font-family:var(--stereo);letter-spacing:.03em;text-transform:uppercase}
+.amb__achieve{font-size:13px;color:var(--mute-d);line-height:1.5;margin-bottom:10px}
 .amb__ig{display:inline-flex;align-items:center;gap:5px;color:var(--cyan);font-family:var(--stereo);font-size:11px;letter-spacing:.04em;text-transform:uppercase;transition:color .2s}
 .amb__ig svg{flex-shrink:0;opacity:.85}
 .amb__ig:hover{color:#fff}
