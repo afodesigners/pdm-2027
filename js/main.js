@@ -557,8 +557,8 @@
       }
 
       // scroll out: cards drift up, title slides
-      gsap.to('.hero__cards', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
-      gsap.to('.hero__title', { y: -80, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: true } });
+      gsap.to('.hero__cards', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: 1.5 } });
+      gsap.to('.hero__title', { y: -80, ease: 'none', scrollTrigger: { trigger: root, start: 'top top', end: 'bottom top', scrub: 1.5 } });
     },
 
     /* BANNER — pinned: framed image opens to full bleed, headline rises */
@@ -663,8 +663,10 @@
             gsap.set(from, { y: 0 });
             to.hidden = false;
             gsap.set(to, { autoAlpha: 0, y: 14 });
-            gsap.to(to, { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power3.out' });
+            gsap.to(to, { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power3.out',
+              onComplete: () => ScrollTrigger.refresh() });
             if (idx === 1) initPhGallery();
+            if (idx === 2) initGfxLightbox();
             if (toItems.length) {
               gsap.fromTo(toItems,
                 { y: 22, autoAlpha: 0 },
@@ -678,6 +680,25 @@
 
       vgTabs.forEach((t, i) => t.addEventListener('click', () => switchVgTab(i)));
       window.addEventListener('resize', () => slidePill(activeTab, true));
+
+      /* ── graphics lightbox (lazy-init on first tab activation) ── */
+      let gfxLbReady = false;
+      function initGfxLightbox() {
+        if (gfxLbReady) return;
+        gfxLbReady = true;
+        const lb      = $('[data-gfx-lightbox]', root);
+        const lbImg   = $('[data-gfx-lb-img]', root);
+        const lbClose = $('[data-gfx-lb-close]', root);
+        if (!lb) return;
+        const open  = (src, alt) => { lbImg.src = src; lbImg.alt = alt; lb.classList.add('is-open'); lb.setAttribute('aria-hidden', 'false'); };
+        const close = () => { lb.classList.remove('is-open'); lb.setAttribute('aria-hidden', 'true'); };
+        $$('.svc__item', panels[2]).forEach((item) => {
+          item.addEventListener('click', () => { const img = item.querySelector('img'); if (img) open(img.src, img.alt); });
+        });
+        if (lbClose) lbClose.addEventListener('click', close);
+        lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('is-open')) close(); });
+      }
 
       /* ── photography scatter gallery (lazy-init on first tab activation) ── */
       let phReady = false;
@@ -1225,7 +1246,6 @@
           start: 'top top',
           end: () => '+=' + travelDist(),
           invalidateOnRefresh: true,
-          anticipatePin: 1,
         });
 
         // stagger cards in as section enters the viewport
