@@ -582,26 +582,15 @@ window.scrollTo(0, 0);
     /* BANNER — pinned: framed image opens to full bleed, headline rises */
     banner() {
       const root = $('[data-section="banner"]');
-      const stage = $('.banner__stage', root);
       const words = $$('.banner__txt .wi', root);
       const sub = $('[data-banner-sub]', root);
-      gsap.set(sub, { autoAlpha: 0, y: 20 });
-      gsap.set(words, { yPercent: 115 });
 
-      const mm = gsap.matchMedia();
-      mm.add(CFG.desktop, () => {
-        gsap.set(stage, { clipPath: 'inset(16% 24% 16% 24%)' });
-        gsap.set($$('.banner__p img', root), { scale: 1.25 });
-        const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: root, start: 'top top', end: '+=140%', scrub: 0.5, pin: true, anticipatePin: 1, fastScrollEnd: true } });
-        tl.to(stage, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1 })
-          .to($$('.banner__p img', root), { scale: 1, duration: 1 }, 0)
-          .to(words, { yPercent: 0, duration: 0.6, stagger: 0.05, ease: 'power3.out' }, 0.45)
-          .to(sub, { autoAlpha: 1, y: 0, duration: 0.4 }, 0.9);
-      });
-      mm.add('(max-width: 820px)', () => {
-        gsap.to(words, { yPercent: 0, duration: 1, stagger: 0.05, ease: CFG.ease, scrollTrigger: { trigger: root, start: 'top 60%', once: true } });
-        gsap.to(sub, { autoAlpha: 1, y: 0, duration: 0.8, delay: 0.4, scrollTrigger: { trigger: root, start: 'top 60%', once: true } });
-      });
+      // Simple scroll-into-view reveal — no pin, no clip-path
+      gsap.set([...words, sub], { autoAlpha: 0, y: 24 });
+      gsap.to(words, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.07, ease: 'power3.out',
+        scrollTrigger: { trigger: root, start: 'top 70%', once: true } });
+      gsap.to(sub, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.3,
+        scrollTrigger: { trigger: root, start: 'top 70%', once: true } });
     },
 
     /* REEL — scroll-scale cinematic: small → full-bleed → small */
