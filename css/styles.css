@@ -434,18 +434,18 @@ body.vg-modal-open{overflow:hidden}
 .ph__dot{width:6px;height:6px;border-radius:50%;background:rgba(9,11,13,.18);border:none;cursor:pointer;padding:0;transition:background .2s}
 .ph__dot.is-active{background:var(--ink)}
 /* ── lightbox ── */
-.ph__lightbox{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s,visibility .35s;cursor:zoom-out}
+.ph__lightbox{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s,visibility .35s;cursor:zoom-out;overflow:hidden;overscroll-behavior:none}
 .ph__lightbox.is-open{opacity:1;visibility:visible;pointer-events:auto}
 .ph__lb-close{position:absolute;top:20px;right:20px;width:44px;height:44px;display:grid;place-items:center;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:50%;cursor:pointer;transition:background .2s,border-color .2s;z-index:1}
 .ph__lb-close:hover{background:rgba(255,255,255,.15);border-color:#fff}
 .ph__lb-fig{max-width:min(90vw,920px);max-height:92vh;cursor:default}
 .ph__lb-img{display:block;width:100%;height:100%;object-fit:contain;border-radius:2px}
-/* graphics lightbox — true full-screen, no margins */
-.ph__lightbox--gfx{background:#000;cursor:default}
-.ph__lb-fig--gfx{width:100vw;height:100vh;max-width:100vw;max-height:100vh;cursor:default;display:flex;align-items:center;justify-content:center}
-.ph__lb-fig--gfx .ph__lb-img{width:100%;height:100%;object-fit:contain;border-radius:0}
+/* graphics lightbox — true full-screen, nothing escapes */
+.ph__lightbox--gfx{background:#000;cursor:default;overflow:hidden;overscroll-behavior:none}
+.ph__lb-fig--gfx{width:100vw;height:100vh;max-width:100vw;max-height:100vh;cursor:default;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ph__lb-fig--gfx .ph__lb-img{width:100%;height:100%;object-fit:contain;border-radius:0;pointer-events:none;user-select:none}
 /* prevent all scroll while any lightbox is open */
-body.lb-open{overflow:hidden;touch-action:none}
+body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
 
 /* === AMBASSADORS === */
 .amb__track-wrap{overflow:hidden;margin-top:clamp(24px,3vw,40px)}

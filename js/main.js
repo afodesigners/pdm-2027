@@ -708,16 +708,21 @@ window.scrollTo(0, 0);
         const lbImg   = $('[data-gfx-lb-img]', root);
         const lbClose = $('[data-gfx-lb-close]', root);
         if (!lb) return;
+        // Block ALL scroll/wheel/touch events from reaching the page behind the lightbox
+        const blockScroll = (e) => e.preventDefault();
         const lockScroll = () => {
           document.body.classList.add('lb-open');
           if (state.lenis) state.lenis.stop();
+          lb.addEventListener('wheel',     blockScroll, { passive: false });
+          lb.addEventListener('touchmove', blockScroll, { passive: false });
         };
         const unlockScroll = () => {
           document.body.classList.remove('lb-open');
           if (state.lenis) state.lenis.start();
+          lb.removeEventListener('wheel',     blockScroll);
+          lb.removeEventListener('touchmove', blockScroll);
         };
         const open = (src, alt) => {
-          // encode the path to handle any special characters in filenames
           const encoded = src.replace(/[^:/?#\[\]@!$&'()*+,;=\-._~%\/]/g, encodeURIComponent);
           lbImg.src = encoded;
           lbImg.alt = alt;
@@ -729,14 +734,13 @@ window.scrollTo(0, 0);
           lb.classList.remove('is-open');
           lb.setAttribute('aria-hidden', 'true');
           unlockScroll();
-          // clear src after fade so old image doesn't flash on next open
           setTimeout(() => { if (!lb.classList.contains('is-open')) lbImg.src = ''; }, 400);
         };
         $$('.svc__item', panels[2]).forEach((item) => {
           item.addEventListener('click', () => { const img = item.querySelector('img'); if (img) open(img.src, img.alt); });
         });
-        if (lbClose) lbClose.addEventListener('click', close);
-        lb.addEventListener('click', (e) => { if (e.target === lb || e.target === lb.querySelector('.ph__lb-fig--gfx')) close(); });
+        if (lbClose) lbClose.addEventListener('click', (e) => { e.stopPropagation(); close(); });
+        lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('is-open')) close(); });
       }
 
@@ -801,21 +805,28 @@ window.scrollTo(0, 0);
         let phCards  = [];
 
         // Lightbox
+        const blockScroll = (e) => e.preventDefault();
         function openLightbox(idx) {
           if (!pLightbox || !pLbImg) return;
           pLbImg.src = SRCS[idx].src;
           pLbImg.alt = SRCS[idx].alt;
           pLightbox.setAttribute('aria-hidden', 'false');
           pLightbox.classList.add('is-open');
-          document.body.style.overflow = 'hidden';
+          document.body.classList.add('lb-open');
+          if (state.lenis) state.lenis.stop();
+          pLightbox.addEventListener('wheel',     blockScroll, { passive: false });
+          pLightbox.addEventListener('touchmove', blockScroll, { passive: false });
         }
         function closeLightbox() {
           if (!pLightbox) return;
           pLightbox.classList.remove('is-open');
           pLightbox.setAttribute('aria-hidden', 'true');
-          document.body.style.overflow = '';
+          document.body.classList.remove('lb-open');
+          if (state.lenis) state.lenis.start();
+          pLightbox.removeEventListener('wheel',     blockScroll);
+          pLightbox.removeEventListener('touchmove', blockScroll);
         }
-        if (pLbClose) pLbClose.addEventListener('click', closeLightbox);
+        if (pLbClose) pLbClose.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
         if (pLightbox) pLightbox.addEventListener('click', (e) => { if (e.target === pLightbox) closeLightbox(); });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
