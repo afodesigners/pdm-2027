@@ -767,67 +767,59 @@ window.scrollTo(0, 0);
         });
       }
 
-      /* ── photography scatter gallery (lazy-init on first tab activation) ── */
+      /* ── photography mixed-orientation grid ── */
       let phReady = false;
       function initPhGallery() {
         if (phReady) return;
         phReady = true;
 
-        const pStage    = $('.ph__stage', root);
-        const pScatter  = $('[data-ph-scatter]', root);
-        const pDotsWrap = $('[data-ph-dots]', root);
-        const pPrev     = $('.ph__btn--p', root);
-        const pNext     = $('.ph__btn--n', root);
+        const grid      = $('[data-ph-grid]', root);
         const pLightbox = $('[data-ph-lightbox]', root);
-        // position:fixed breaks inside GSAP-transformed parents — move to body
         if (pLightbox) document.body.appendChild(pLightbox);
-        const pLbImg    = pLightbox && pLightbox.querySelector('.ph__lb-img');
-        const pLbClose  = pLightbox && pLightbox.querySelector('.ph__lb-close');
-        if (!pStage) return;
+        const pLbImg   = pLightbox && pLightbox.querySelector('.ph__lb-img');
+        const pLbClose = pLightbox && pLightbox.querySelector('.ph__lb-close');
+        if (!grid) return;
 
+        // Alternating H(landscape,span-2) + V(portrait,span-1) layout
+        // sequence creates editorial rhythm: [H V] [V H] [H V] [V H] …
         const SRCS = [
-          { src: 'assets/img/p-car-track.jpg',         alt: 'Formula car cornering at circuit' },
-          { src: 'assets/img/p-cockpit-dark.jpg',      alt: 'Driver in cockpit, dramatic lighting' },
-          { src: 'assets/img/p-race-duel.jpg',         alt: 'Two Formula cars racing side by side' },
-          { src: 'assets/img/p-cockpit-orange.jpg',    alt: 'Close-up of driver in orange Formula car cockpit' },
-          { src: 'assets/img/p-car-overhead.jpg',      alt: 'Formula car viewed from above in pit lane' },
-          { src: 'assets/img/p-car-dusk.jpg',          alt: 'Formula car rear view at dusk on circuit' },
-          { src: 'assets/img/p-driver-red.jpg',        alt: 'Driver in red race suit holding steering wheel' },
-          { src: 'assets/img/p-car-rear.jpg',          alt: 'Formula car rear view at circuit with grandstands' },
-          { src: 'assets/img/p-car-var.jpg',           alt: 'Formula car exiting pit lane onto circuit' },
-          { src: 'assets/img/p-team-media.jpg',        alt: 'Media team photographing Formula car in paddock' },
-          { src: 'assets/img/p-car-display.jpg',       alt: 'Formula car on display in paddock tent' },
-          { src: 'assets/img/p-mechanic.jpg',          alt: 'Mechanic working on Formula car at pit wall' },
+          { src:'assets/img/ph-h-pitwall.jpg',     alt:'Pit wall action during race weekend',           h:true  },
+          { src:'assets/img/p-car-track.jpg',       alt:'Formula car cornering at circuit',               h:false },
+          { src:'assets/img/p-cockpit-dark.jpg',    alt:'Driver in cockpit, dramatic low-key lighting',   h:false },
+          { src:'assets/img/ph-h-paddock.jpg',      alt:'Paddock life and team atmosphere',               h:true  },
+          { src:'assets/img/ph-h-garage.jpg',       alt:'Team in garage, pre-race preparation',           h:true  },
+          { src:'assets/img/p-race-duel.jpg',       alt:'Two Formula cars racing side by side',           h:false },
+          { src:'assets/img/p-cockpit-orange.jpg',  alt:'Driver in orange Formula car cockpit',           h:false },
+          { src:'assets/img/ph-h-team-work.jpg',    alt:'Team working together during race weekend',      h:true  },
+          { src:'assets/img/ph-h-cockpit-prep.jpg', alt:'Cockpit preparation and driver helmet fitting',  h:true  },
+          { src:'assets/img/p-car-overhead.jpg',    alt:'Formula car viewed from above in pit lane',      h:false },
+          { src:'assets/img/p-car-dusk.jpg',        alt:'Formula car rear view at golden hour',           h:false },
+          { src:'assets/img/ph-h-formation.jpg',    alt:'Cars lined up on the grid formation lap',        h:true  },
+          { src:'assets/img/ph-h-race-start.jpg',   alt:'Race start moment — cars off the line',          h:true  },
+          { src:'assets/img/p-driver-red.jpg',      alt:'Driver in red race suit, paddock portrait',      h:false },
+          { src:'assets/img/p-car-rear.jpg',        alt:'Formula car rear at circuit with grandstands',   h:false },
+          { src:'assets/img/ph-h-battle.jpg',       alt:'Side by side battle through the corner',         h:true  },
+          { src:'assets/img/ph-h-celebration.jpg',  alt:'Team and driver celebrating after the race',     h:true  },
+          { src:'assets/img/p-car-var.jpg',         alt:'Formula car exiting pit lane',                   h:false },
+          { src:'assets/img/p-team-media.jpg',      alt:'PDM media team photographing in the paddock',    h:false },
+          { src:'assets/img/ph-h-podium.jpg',       alt:'Podium moment, trophy in hand',                  h:true  },
+          { src:'assets/img/p-car-display.jpg',     alt:'Formula car on display in paddock hospitality',  h:false },
+          { src:'assets/img/p-mechanic.jpg',        alt:'Mechanic working on Formula car at pit wall',    h:false },
         ];
         const N = SRCS.length;
 
-        // Desktop: 5 per page, scattered positions (design width 1000px)
-        const D_SPREADS = [
-          [
-            { x:-440, y: 14, rot: -9 }, { x:-215, y:-20, rot:  5 },
-            { x:   0, y: 24, rot: -3 }, { x: 215, y:-14, rot:  8 }, { x: 435, y: 10, rot: -6 },
-          ],
-          [
-            { x:-425, y: -6, rot:-12 }, { x:-205, y: 22, rot:  3 },
-            { x:  12, y:-20, rot: -2 }, { x: 220, y: 16, rot:  7 }, { x: 445, y: -9, rot:-10 },
-          ],
-          [
-            { x:-455, y: 22, rot:  7 }, { x:-212, y: -9, rot: -5 },
-            { x:   5, y: 20, rot:  4 }, { x: 218, y:-22, rot: -8 }, { x: 440, y: 16, rot: 11 },
-          ],
-        ];
-
-        // Mobile: stacked deck — front / mid / back
-        const STACK = [
-          { x:  0, y:  0, rot: -3, scale: 1.00, alpha: 1.00, z: 12 },
-          { x: 28, y: 10, rot:  7, scale: 0.93, alpha: 0.85, z:  8 },
-          { x: 48, y: 20, rot: 13, scale: 0.86, alpha: 0.65, z:  4 },
-        ];
-
-        let curPage  = -1;
-        let builtPer = 0;
-        let animating = false;
-        let phCards  = [];
+        // Build grid items
+        SRCS.forEach(({ src, alt, h }, idx) => {
+          const item = document.createElement('figure');
+          item.className = `ph-gi${h ? ' ph-gi--h' : ' ph-gi--v'}`;
+          const img = document.createElement('img');
+          img.src = src; img.alt = alt;
+          img.loading = idx < 6 ? 'eager' : 'lazy';
+          img.decoding = 'async';
+          item.appendChild(img);
+          grid.appendChild(item);
+          item.addEventListener('click', () => openLightbox(idx));
+        });
 
         // Lightbox
         const pLbPrev  = pLightbox && $('[data-ph-lb-prev]', pLightbox);
@@ -874,223 +866,6 @@ window.scrollTo(0, 0);
           if (e.key === 'ArrowRight') { e.preventDefault(); showLightbox(phLbIdx + 1); }
           if (e.key === 'Escape') closeLightbox();
         });
-
-        // Build card elements
-        SRCS.forEach(({ src, alt }, idx) => {
-          const fig = document.createElement('figure');
-          fig.className = 'ph__card';
-          const img = document.createElement('img');
-          img.src = src; img.alt = alt; img.loading = 'lazy';
-          fig.appendChild(img);
-          pScatter.appendChild(fig);
-          gsap.set(fig, { xPercent: -50, yPercent: -50, autoAlpha: 0 });
-          fig.addEventListener('click', () => openLightbox(idx));
-          phCards.push(fig);
-        });
-
-        // Desktop hover: lift & straighten
-        phCards.forEach((c, i) => {
-          c.addEventListener('pointerenter', () => {
-            if (getCfg().per === 1) return;
-            gsap.to(c, { scale: 1.06, rotation: 0, zIndex: 10, duration: 0.38,
-              ease: 'power3.out', boxShadow: '0 22px 60px rgba(0,0,0,.22)' });
-          });
-          c.addEventListener('pointerleave', () => {
-            const { per, spreads } = getCfg();
-            if (per === 1) return;
-            const pg = Math.floor(i / per);
-            if (pg !== curPage) return;
-            const pos = getPos(spreads, pg, per)[i % per];
-            gsap.to(c, { scale: 1, rotation: pos ? pos.rot : 0, zIndex: 2,
-              duration: 0.5, ease: 'power3.out', boxShadow: '0 4px 24px rgba(0,0,0,.14)' });
-          });
-        });
-
-        function getCfg() {
-          return window.innerWidth < 820
-            ? { per: 1, spreads: null, designW: 375 }
-            : { per: 5, spreads: D_SPREADS, designW: 1000 };
-        }
-
-        function sc(designW) { return Math.min(1, (pStage.offsetWidth - 60) / designW); }
-
-        function getPos(spreads, pageIdx, per) {
-          const spread = spreads[pageIdx % spreads.length];
-          const count  = Math.min(per, N - pageIdx * per);
-          if (count >= spread.length) return spread;
-          const start = Math.floor((spread.length - count) / 2);
-          return spread.slice(start, start + count);
-        }
-
-        function rebuildDots(pages) {
-          pDotsWrap.innerHTML = '';
-          for (let i = 0; i < pages; i++) {
-            const d = document.createElement('button');
-            d.className = 'ph__dot';
-            d.setAttribute('aria-label', `Photo ${i + 1} of ${pages}`);
-            d.addEventListener('click', () => { if (!animating) go(i); });
-            pDotsWrap.appendChild(d);
-          }
-        }
-
-        // Sliding window: always shows 3 dots, active one centred when possible
-        function updateDots(active, total) {
-          const WIN = 3;
-          const half = Math.floor(WIN / 2);
-          const wStart = Math.max(0, Math.min(active - half, total - WIN));
-          const wEnd   = Math.min(total - 1, wStart + WIN - 1);
-          $$('.ph__dot', pDotsWrap).forEach((d, i) => {
-            const inWin = i >= wStart && i <= wEnd;
-            d.style.display = inWin ? '' : 'none';
-            d.classList.toggle('is-active', i === active);
-            if (inWin) {
-              const dist = Math.abs(i - active);
-              gsap.to(d, { scale: dist === 0 ? 1.6 : 0.7, opacity: dist === 0 ? 1 : 0.45, duration: 0.25 });
-            }
-          });
-        }
-
-        // ── Mobile: stacked deck ──────────────────────────────────────────────
-        function setStack(cardIdx, stackIdx, animate) {
-          const c = phCards[((cardIdx % N) + N) % N];
-          const p = STACK[stackIdx];
-          const props = { x: p.x, y: p.y, rotation: p.rot, scale: p.scale, autoAlpha: p.alpha, zIndex: p.z };
-          if (animate) gsap.to(c, { ...props, duration: 0.52, ease: 'expo.out' });
-          else         gsap.set(c, props);
-        }
-
-        function goMobile(next) {
-          const pages = N;
-          updateDots(next, pages);
-
-          if (curPage === -1) {
-            // Initial render: place first 3 in the stack, hide the rest
-            for (let i = 0; i < 3; i++) setStack(next + i, i, false);
-            phCards.forEach((c, i) => { if (i >= 3) gsap.set(c, { autoAlpha: 0 }); });
-            curPage = next;
-            animating = false;
-            return;
-          }
-
-          const diff = ((next - curPage) % N + N) % N;
-          const fwd  = diff <= N / 2;
-          const fi   = curPage,       mi = (curPage + 1) % N, bi = (curPage + 2) % N;
-          const tl   = gsap.timeline({ onComplete: () => { animating = false; } });
-          animating  = true;
-
-          if (fwd) {
-            const incoming = (curPage + 3) % N;
-            tl.to(phCards[fi], { x: -420, autoAlpha: 0, rotation: -18, scale: 0.88, duration: 0.36, ease: 'power2.in' });
-            tl.to(phCards[mi], { x: STACK[0].x, y: STACK[0].y, rotation: STACK[0].rot, scale: STACK[0].scale, autoAlpha: STACK[0].alpha, zIndex: STACK[0].z, duration: 0.52, ease: 'expo.out' }, '<0.08');
-            tl.to(phCards[bi], { x: STACK[1].x, y: STACK[1].y, rotation: STACK[1].rot, scale: STACK[1].scale, autoAlpha: STACK[1].alpha, zIndex: STACK[1].z, duration: 0.52, ease: 'expo.out' }, '<');
-            tl.set(phCards[incoming], { x: STACK[2].x + 32, y: STACK[2].y, rotation: STACK[2].rot + 6, scale: STACK[2].scale, autoAlpha: 0, zIndex: STACK[2].z }, '<0.12');
-            tl.to(phCards[incoming],  { x: STACK[2].x, autoAlpha: STACK[2].alpha, duration: 0.38, ease: 'expo.out' }, '<');
-          } else {
-            const incoming = ((curPage - 1) % N + N) % N;
-            tl.to(phCards[bi], { x: STACK[2].x + 24, autoAlpha: 0, duration: 0.26, ease: 'power2.in' });
-            tl.to(phCards[mi], { x: STACK[2].x, y: STACK[2].y, rotation: STACK[2].rot, scale: STACK[2].scale, autoAlpha: STACK[2].alpha, zIndex: STACK[2].z, duration: 0.5, ease: 'expo.out' }, '<0.04');
-            tl.to(phCards[fi], { x: STACK[1].x, y: STACK[1].y, rotation: STACK[1].rot, scale: STACK[1].scale, autoAlpha: STACK[1].alpha, zIndex: STACK[1].z, duration: 0.5, ease: 'expo.out' }, '<');
-            tl.set(phCards[incoming], { x: -360, y: 0, rotation: -18, scale: 1, autoAlpha: 0, zIndex: STACK[0].z }, '<');
-            tl.to(phCards[incoming],  { x: STACK[0].x, y: STACK[0].y, rotation: STACK[0].rot, scale: STACK[0].scale, autoAlpha: STACK[0].alpha, duration: 0.5, ease: 'expo.out' }, '<');
-          }
-
-          curPage = next;
-        }
-
-        // ── Desktop: scatter gallery ──────────────────────────────────────────
-        function goDesktop(next, per, spreads, designW) {
-          const pages = Math.ceil(N / per);
-          const prev  = curPage;
-          const oldCards = prev >= 0 ? phCards.slice(prev * per, prev * per + per) : [];
-          const newCards = phCards.slice(next * per, next * per + per);
-          const spread   = getPos(spreads, next, per);
-          const dir      = next >= prev ? 1 : -1;
-          const s        = sc(designW);
-
-          updateDots(next, pages);
-
-          const tl = gsap.timeline({ onComplete: () => { animating = false; } });
-          animating = true;
-
-          if (oldCards.length) {
-            const oldSpread = getPos(spreads, prev, per);
-            tl.to(oldCards, { x: (i) => (oldSpread[i]?.x || 0) * s + dir * -220 * s,
-              autoAlpha: 0, duration: 0.3, stagger: 0.04, ease: 'power2.in' });
-          }
-          tl.set(newCards, { x: (i) => (spread[i]?.x || 0) * s + dir * 240 * s,
-            y: (i) => spread[i]?.y || 0, rotation: (i) => spread[i]?.rot || 0,
-            autoAlpha: 0, zIndex: 2 });
-          tl.to(newCards, { x: (i) => (spread[i]?.x || 0) * s,
-            autoAlpha: 1, stagger: 0.07, duration: 0.65, ease: 'expo.out' });
-
-          curPage = next;
-        }
-
-        // ── Router ────────────────────────────────────────────────────────────
-        function go(next) {
-          const { per, spreads, designW } = getCfg();
-          const pages = Math.ceil(N / per);
-
-          if (per !== builtPer) {
-            builtPer = per;
-            rebuildDots(pages);
-            gsap.set(phCards, { autoAlpha: 0 });
-            curPage  = -1;
-            animating = false;
-          }
-
-          if (per === 1) goMobile(next);
-          else           goDesktop(next, per, spreads, designW);
-        }
-
-        pPrev.addEventListener('click', () => {
-          if (animating) return;
-          const { per } = getCfg();
-          const pages = Math.ceil(N / per);
-          go(((curPage - 1) % pages + pages) % pages);
-        });
-        pNext.addEventListener('click', () => {
-          if (animating) return;
-          const { per } = getCfg();
-          go((curPage + 1) % Math.ceil(N / per));
-        });
-
-        let touchStartX = 0, touchStartY = 0, swipeLocked = false;
-        pStage.addEventListener('touchstart', (e) => {
-          touchStartX = e.touches[0].clientX;
-          touchStartY = e.touches[0].clientY;
-          swipeLocked = false;
-        }, { passive: true });
-        pStage.addEventListener('touchmove', (e) => {
-          const dx = e.touches[0].clientX - touchStartX;
-          const dy = e.touches[0].clientY - touchStartY;
-          if (!swipeLocked && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
-            swipeLocked = true;
-          }
-          if (swipeLocked) e.preventDefault();
-        }, { passive: false });
-        pStage.addEventListener('touchend', (e) => {
-          if (animating || !swipeLocked) return;
-          const dx = e.changedTouches[0].clientX - touchStartX;
-          if (Math.abs(dx) < 40) return;
-          const { per } = getCfg();
-          const pages = Math.ceil(N / per);
-          if (dx < 0) go((curPage + 1) % pages);
-          else        go(((curPage - 1) % pages + pages) % pages);
-        }, { passive: true });
-
-        window.addEventListener('resize', () => {
-          const { per, spreads, designW } = getCfg();
-          if (per !== builtPer) { go(0); return; }
-          if (curPage < 0 || per === 1) return;
-          const spread = getPos(spreads, curPage, per);
-          const s = sc(designW);
-          phCards.slice(curPage * per, curPage * per + per).forEach((c, i) => {
-            gsap.set(c, { x: (spread[i]?.x || 0) * s, y: spread[i]?.y || 0 });
-          });
-        });
-
-        go(0);
       }
       /* ── end pill tab bar ── */
 
