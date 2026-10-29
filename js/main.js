@@ -203,7 +203,7 @@
     const ctx = canvas.getContext('2d');
     if (!ctx) { canvas.remove(); document.documentElement.classList.remove('has-cursor'); return; }
 
-    let W = 0, H = 0, rafId = 0, lastTime = performance.now(), lastPos = null;
+    let W = 0, H = 0, rafId = 0, lastTime = performance.now(), lastPos = null, lastMoveTime = -Infinity;
     const g = Math.max(1, Math.round(DOT_SIZE));
 
     function resize() {
@@ -257,10 +257,21 @@
       ctx.fillStyle = `rgba(0,0,0,${alpha})`;
       ctx.fillRect(0, 0, W, H);
       ctx.globalCompositeOperation = 'source-over';
+      // Stop the loop once the trail has fully faded; restart on next cursor move
+      if (time - lastMoveTime > FADE_DUR + 300) {
+        ctx.clearRect(0, 0, W, H);
+        lastPos = null;
+        rafId = 0;
+        return;
+      }
       rafId = requestAnimationFrame(fade);
     }
 
-    const onMove = (e) => drawTrail(e.clientX, e.clientY);
+    const onMove = (e) => {
+      lastMoveTime = performance.now();
+      drawTrail(e.clientX, e.clientY);
+      if (!rafId) { lastTime = performance.now(); rafId = requestAnimationFrame(fade); }
+    };
     const onOut  = (e) => { if (!e.relatedTarget) lastPos = null; };
 
     resize();

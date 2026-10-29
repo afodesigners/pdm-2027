@@ -53,7 +53,7 @@ section[id]{scroll-margin-top:var(--head)}
 .arr{display:inline-block;transition:transform .3s}
 
 /* ---------- buttons ---------- */
-.btn{display:inline-flex;align-items:center;gap:14px;padding:16px 24px;font-weight:600;font-size:15px;border:1px solid transparent;border-radius:2px;transition:background-color .25s,color .25s,border-color .25s;will-change:transform}
+.btn{display:inline-flex;align-items:center;gap:14px;padding:16px 24px;font-weight:600;font-size:15px;border:1px solid transparent;border-radius:2px;transition:background-color .25s,color .25s,border-color .25s}
 .btn:hover .arr{transform:translate(3px,-3px)}
 .btn--solid{background:var(--cyan);color:var(--ink)}
 .btn--solid:hover{background:var(--white)}
@@ -76,7 +76,7 @@ section[id]{scroll-margin-top:var(--head)}
 
 /* split-words wrappers (made by js) */
 .w{display:inline-block;overflow:hidden;vertical-align:top;padding:.04em 0 .1em;margin:-.04em 0 -.1em}
-.wi{display:inline-block;will-change:transform}
+.wi{display:inline-block}
 .js [data-split]:not(.is-split),.js [data-reveal]:not(.is-in){visibility:hidden}
 
 /* ---------- header ---------- */
