@@ -708,13 +708,35 @@ window.scrollTo(0, 0);
         const lbImg   = $('[data-gfx-lb-img]', root);
         const lbClose = $('[data-gfx-lb-close]', root);
         if (!lb) return;
-        const open  = (src, alt) => { lbImg.src = src; lbImg.alt = alt; lb.classList.add('is-open'); lb.setAttribute('aria-hidden', 'false'); };
-        const close = () => { lb.classList.remove('is-open'); lb.setAttribute('aria-hidden', 'true'); };
+        const lockScroll = () => {
+          document.body.classList.add('lb-open');
+          if (state.lenis) state.lenis.stop();
+        };
+        const unlockScroll = () => {
+          document.body.classList.remove('lb-open');
+          if (state.lenis) state.lenis.start();
+        };
+        const open = (src, alt) => {
+          // encode the path to handle any special characters in filenames
+          const encoded = src.replace(/[^:/?#\[\]@!$&'()*+,;=\-._~%\/]/g, encodeURIComponent);
+          lbImg.src = encoded;
+          lbImg.alt = alt;
+          lb.classList.add('is-open');
+          lb.setAttribute('aria-hidden', 'false');
+          lockScroll();
+        };
+        const close = () => {
+          lb.classList.remove('is-open');
+          lb.setAttribute('aria-hidden', 'true');
+          unlockScroll();
+          // clear src after fade so old image doesn't flash on next open
+          setTimeout(() => { if (!lb.classList.contains('is-open')) lbImg.src = ''; }, 400);
+        };
         $$('.svc__item', panels[2]).forEach((item) => {
           item.addEventListener('click', () => { const img = item.querySelector('img'); if (img) open(img.src, img.alt); });
         });
         if (lbClose) lbClose.addEventListener('click', close);
-        lb.addEventListener('click', (e) => { if (e.target === lb) close(); });
+        lb.addEventListener('click', (e) => { if (e.target === lb || e.target === lb.querySelector('.ph__lb-fig--gfx')) close(); });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lb.classList.contains('is-open')) close(); });
       }
 
@@ -1315,6 +1337,7 @@ window.scrollTo(0, 0);
 
   mm.add(CFG.motionOK, () => {
     const lenis = initSmoothScroll();
+    state.lenis = lenis;
     const offCursor = initCursor();
     initHeader();
     initSplits();
