@@ -215,6 +215,7 @@ html.lenis,html.lenis body{height:auto}
 .banner__txt{position:absolute;left:var(--gut);right:var(--gut);bottom:clamp(60px,12vh,120px);z-index:3}
 .banner__txt h2{font-size:clamp(52px,9vw,150px);line-height:.9;text-wrap:balance;max-width:11ch}
 .banner__sub{margin-top:22px;font-size:clamp(16px,1.5vw,22px);color:rgba(255,255,255,.88)}
+.banner__cta{margin-top:clamp(28px,3.5vh,48px);pointer-events:all}
 
 /* === REEL (parallax cinematic closer) === */
 .reel{position:relative;height:85vh;min-height:560px;overflow:hidden;background:#000}
