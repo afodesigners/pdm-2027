@@ -217,16 +217,15 @@ html.lenis,html.lenis body{height:auto}
 .banner__sub{margin-top:22px;font-size:clamp(16px,1.5vw,22px);color:rgba(255,255,255,.88)}
 .banner__cta{margin-top:clamp(28px,3.5vh,48px);pointer-events:all}
 
-/* === REEL (parallax cinematic closer) === */
-.reel{position:relative;height:85vh;min-height:560px;overflow:hidden;background:#000}
-.reel__parallax{position:absolute;inset:0;height:130%;top:-15%;will-change:transform}
+/* === REEL (scroll-scale cinematic, sticky 300vh) === */
+.reel{height:300vh;background:#000}
+.reel__sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.reel__frame{width:100%;height:100%;border-radius:0;overflow:hidden;transform-origin:center center;will-change:transform,border-radius}
 .reel__video{display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
-.reel__overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2vh,22px);padding:var(--gut);background:linear-gradient(0deg,rgba(0,0,0,.65) 0%,rgba(0,0,0,.1) 60%,rgba(0,0,0,.4) 100%);text-align:center}
-.reel__eyebrow{color:rgba(255,255,255,.55);letter-spacing:.14em}
-.reel__headline{font-size:clamp(48px,8vw,120px);line-height:.9;color:#fff;text-wrap:balance}
-.reel__sub{font-size:clamp(15px,1.4vw,20px);color:rgba(255,255,255,.7);max-width:42ch;line-height:1.5}
-.reel__cta{margin-top:clamp(8px,1.4vh,18px);pointer-events:all}
-@media(max-width:600px){.reel__headline{font-size:clamp(38px,12vw,64px)}.reel{height:90vh}}
+.reel__overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:clamp(48px,8vh,96px);background:linear-gradient(0deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,0) 55%);pointer-events:none;text-align:center}
+.reel__eyebrow{color:rgba(255,255,255,.55);margin-bottom:clamp(12px,1.4vw,20px);letter-spacing:.14em}
+.reel__headline{font-size:clamp(52px,9vw,140px);line-height:.9;color:#fff;text-wrap:balance}
+@media(max-width:600px){.reel__headline{font-size:clamp(40px,13vw,72px)}}
 
 /* ---------- programmes ---------- */
 .ways{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2.2vw,32px)}

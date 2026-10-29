@@ -604,30 +604,30 @@ window.scrollTo(0, 0);
       });
     },
 
-    /* REEL — parallax cinematic closer before contact CTA */
+    /* REEL — scroll-scale cinematic: small → full-bleed → small */
     reel() {
       const root     = $('[data-section="reel"]');
       if (!root) return;
-      const parallax = $('[data-reel-parallax]', root);
+      const frame    = $('[data-reel-frame]', root);
       const eyebrow  = $('[data-reel-eyebrow]', root);
       const headline = $('[data-reel-headline]', root);
-      const sub      = $('[data-reel-sub]', root);
-      const cta      = $('[data-reel-cta]', root);
-      if (!parallax) return;
+      if (!frame) return;
 
-      // Video parallax — drifts upward at 40% scroll speed
-      gsap.fromTo(parallax,
-        { yPercent: 0 },
-        { yPercent: -20, ease: 'none',
-          scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: true } }
-      );
+      gsap.set(frame, { scale: 0.7, borderRadius: '20px' });
+      gsap.set([eyebrow, headline], { autoAlpha: 0, y: 28 });
 
-      // Text reveal on scroll-into-view
-      gsap.set([eyebrow, headline, sub, cta], { autoAlpha: 0, y: 30 });
-      gsap.to([eyebrow, headline, sub, cta], {
-        autoAlpha: 1, y: 0, duration: 1, stagger: 0.12, ease: 'power3.out',
-        scrollTrigger: { trigger: root, start: 'top 70%', once: true }
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: root, start: 'top top', end: 'bottom bottom', scrub: 1.2 }
       });
+
+      // Grow to full bleed, fade in text
+      tl.to(frame,   { scale: 1, borderRadius: '0px', ease: 'power2.inOut', duration: 4 }, 0)
+        .to(eyebrow,  { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2 }, 2)
+        .to(headline, { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2.5 }, 2.5);
+
+      // Shrink back, fade text out
+      tl.to([eyebrow, headline], { autoAlpha: 0, y: -20, ease: 'power2.in', duration: 2 }, 6)
+        .to(frame, { scale: 0.7, borderRadius: '20px', ease: 'power2.inOut', duration: 4 }, 7);
     },
 
     /* ALWAYS — mouse-parallax depth on the right image + list-item hover zoom */
