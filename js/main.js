@@ -22,6 +22,10 @@
    5. Boot           Everything runs inside gsap.matchMedia(), so reduced-motion
                      users get the plain page and everything cleans itself up.
    ========================================================================== */
+// Prevent browser from restoring scroll position on refresh
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
 (function () {
   'use strict';
   if (!window.gsap || !window.ScrollTrigger) return;
@@ -295,10 +299,10 @@
   /* 3j. Smooth scroll (Lenis) wired into ScrollTrigger. Returns the instance or null. */
   function initSmoothScroll() {
     if (!window.Lenis) return null;
-    const lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.95 });
+    const lenis = new Lenis({ lerp: 0.12, wheelMultiplier: 1.0 });
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (t) => lenis.raf(t * 1000);
-    gsap.ticker.add(tick); gsap.ticker.lagSmoothing(0);
+    gsap.ticker.add(tick);
     $$('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
       const id = a.getAttribute('href'); const target = id.length > 1 && $(id);
       if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: id === '#top' ? 0 : -60, duration: 1.4 }); }
@@ -425,10 +429,13 @@
     });
   }
   function marqueeVelocity(tweens) {
+    let dcall;
     ScrollTrigger.create({
       onUpdate: (self) => {
         const boost = 1 + Math.min(5, Math.abs(self.getVelocity()) / 350);
-        tweens.forEach((t) => { gsap.to(t, { timeScale: boost, duration: 0.2, overwrite: true }); gsap.to(t, { timeScale: 1, duration: 0.9, delay: 0.2 }); });
+        tweens.forEach((t) => t.timeScale(boost));
+        if (dcall) dcall.kill();
+        dcall = gsap.delayedCall(0.3, () => tweens.forEach((t) => gsap.to(t, { timeScale: 1, duration: 0.9 })));
       }
     });
   }
