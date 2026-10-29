@@ -149,12 +149,12 @@
     $$('[data-float]').forEach((fig) => {
       const d = parseFloat(fig.dataset.float);
       gsap.fromTo(fig, { yPercent: -18 * d }, { yPercent: 18 * d, ease: 'none',
-        scrollTrigger: { trigger: fig.closest('section'), start: 'top bottom', end: 'bottom top', scrub: true } });
+        scrollTrigger: { trigger: fig.closest('section'), start: 'top bottom', end: 'bottom top', scrub: 1.2 } });
     });
     $$('.pimg').forEach((p) => {
       const img = $('img', p);
       gsap.fromTo(img, { yPercent: -5 }, { yPercent: 5, ease: 'none',
-        scrollTrigger: { trigger: p, start: 'top bottom', end: 'bottom top', scrub: true } });
+        scrollTrigger: { trigger: p, start: 'top bottom', end: 'bottom top', scrub: 1.2 } });
     });
   }
 
