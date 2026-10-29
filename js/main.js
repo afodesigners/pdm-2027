@@ -593,7 +593,7 @@ window.scrollTo(0, 0);
         scrollTrigger: { trigger: root, start: 'top 70%', once: true } });
     },
 
-    /* REEL — scroll-scale cinematic: small → full-bleed → small */
+    /* REEL — desktop: scroll-scale cinematic  /  mobile: static fullscreen + fade-in */
     reel() {
       const root     = $('[data-section="reel"]');
       if (!root) return;
@@ -602,21 +602,32 @@ window.scrollTo(0, 0);
       const headline = $('[data-reel-headline]', root);
       if (!frame) return;
 
-      gsap.set(frame, { scale: 0.7, borderRadius: '20px' });
-      gsap.set([eyebrow, headline], { autoAlpha: 0, y: 28 });
+      const mm = gsap.matchMedia();
 
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: root, start: 'top top', end: 'bottom bottom', scrub: 1.2 }
+      // ── Desktop: shrink → grow → shrink ──────────────────────────────────
+      mm.add('(min-width: 821px)', () => {
+        gsap.set(frame,   { scale: 0.7, borderRadius: '20px' });
+        gsap.set([eyebrow, headline], { autoAlpha: 0, y: 28 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: root, start: 'top top', end: 'bottom bottom', scrub: 1.2 }
+        });
+        tl.to(frame,   { scale: 1, borderRadius: '0px', ease: 'power2.inOut', duration: 4 }, 0)
+          .to(eyebrow,  { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2 }, 2)
+          .to(headline, { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2.5 }, 2.5)
+          .to([eyebrow, headline], { autoAlpha: 0, y: -20, ease: 'power2.in', duration: 2 }, 6)
+          .to(frame, { scale: 0.7, borderRadius: '20px', ease: 'power2.inOut', duration: 4 }, 7);
       });
 
-      // Grow to full bleed, fade in text
-      tl.to(frame,   { scale: 1, borderRadius: '0px', ease: 'power2.inOut', duration: 4 }, 0)
-        .to(eyebrow,  { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2 }, 2)
-        .to(headline, { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2.5 }, 2.5);
-
-      // Shrink back, fade text out
-      tl.to([eyebrow, headline], { autoAlpha: 0, y: -20, ease: 'power2.in', duration: 2 }, 6)
-        .to(frame, { scale: 0.7, borderRadius: '20px', ease: 'power2.inOut', duration: 4 }, 7);
+      // ── Mobile: full-bleed static video, text fades in on scroll ─────────
+      mm.add('(max-width: 820px)', () => {
+        gsap.set(frame,   { scale: 1, borderRadius: '0px', clearProps: 'all' });
+        gsap.set([eyebrow, headline], { autoAlpha: 0, y: 20 });
+        gsap.to([eyebrow, headline], {
+          autoAlpha: 1, y: 0, stagger: 0.15, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: root, start: 'top 75%', once: true }
+        });
+      });
     },
 
     /* ALWAYS — mouse-parallax depth on the right image + list-item hover zoom */
