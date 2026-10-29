@@ -604,6 +604,39 @@ window.scrollTo(0, 0);
       });
     },
 
+    /* REEL — scroll-scale cinematic video: small → full-bleed → small */
+    reel() {
+      const root    = $('[data-section="reel"]');
+      if (!root) return;
+      const frame   = $('[data-reel-frame]', root);
+      const overlay = $('[data-reel-overlay]', root);
+      const eyebrow = $('[data-reel-eyebrow]', root);
+      const headline = $('[data-reel-headline]', root);
+      if (!frame) return;
+
+      // Initial state: scaled down with rounded corners
+      gsap.set(frame, { scale: 0.7, borderRadius: '20px' });
+      gsap.set([eyebrow, headline], { autoAlpha: 0, y: 28 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: root,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1.2,
+        }
+      });
+
+      // Phase 1 (0%–40%): grow to full bleed, fade in text
+      tl.to(frame, { scale: 1, borderRadius: '0px', ease: 'power2.inOut', duration: 4 }, 0)
+        .to(eyebrow,  { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2 }, 2)
+        .to(headline, { autoAlpha: 1, y: 0, ease: 'power2.out', duration: 2.5 }, 2.5);
+
+      // Phase 2 (60%–100%): shrink back, fade text out
+      tl.to([eyebrow, headline], { autoAlpha: 0, y: -20, ease: 'power2.in', duration: 2 }, 6)
+        .to(frame, { scale: 0.7, borderRadius: '20px', ease: 'power2.inOut', duration: 4 }, 7);
+    },
+
     /* ALWAYS — mouse-parallax depth on the right image + list-item hover zoom */
     always() {
       const root = $('[data-section="always"]');
