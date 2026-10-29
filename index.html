@@ -348,12 +348,11 @@
     </div>
     <!-- lightbox -->
     <div class="ph__lightbox" data-ph-lightbox aria-hidden="true" role="dialog" aria-modal="true" aria-label="Full-screen photo">
-      <button class="ph__lb-close" aria-label="Close photo">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      </button>
-      <figure class="ph__lb-fig">
-        <img class="ph__lb-img" src="" alt="" loading="lazy">
-      </figure>
+      <button class="ph__lb-close" aria-label="Close photo"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <button class="ph__lb-nav ph__lb-nav--p" data-ph-lb-prev aria-label="Previous photo"><svg width="14" height="24" viewBox="0 0 14 24" fill="none" aria-hidden="true"><path d="M12 2L2 12l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="ph__lb-nav ph__lb-nav--n" data-ph-lb-next aria-label="Next photo"><svg width="14" height="24" viewBox="0 0 14 24" fill="none" aria-hidden="true"><path d="M2 2l10 10-10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span class="ph__lb-count" data-ph-lb-count aria-live="polite"></span>
+      <figure class="ph__lb-fig"><img class="ph__lb-img" src="" alt=""></figure>
     </div>
   </div>
 
@@ -361,6 +360,9 @@
   <div class="vg__content" data-vgpanel="2" hidden>
     <div class="ph__lightbox ph__lightbox--gfx" data-gfx-lightbox aria-hidden="true" role="dialog" aria-modal="true" aria-label="Full-screen graphic">
       <button class="ph__lb-close" data-gfx-lb-close aria-label="Close graphic"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <button class="ph__lb-nav ph__lb-nav--p" data-gfx-lb-prev aria-label="Previous graphic"><svg width="14" height="24" viewBox="0 0 14 24" fill="none" aria-hidden="true"><path d="M12 2L2 12l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="ph__lb-nav ph__lb-nav--n" data-gfx-lb-next aria-label="Next graphic"><svg width="14" height="24" viewBox="0 0 14 24" fill="none" aria-hidden="true"><path d="M2 2l10 10-10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <span class="ph__lb-count" data-gfx-lb-count aria-live="polite"></span>
       <figure class="ph__lb-fig ph__lb-fig--gfx"><img class="ph__lb-img" data-gfx-lb-img src="" alt=""></figure>
     </div>
     <div class="wrap">
