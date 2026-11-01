@@ -399,10 +399,9 @@ body.vg-modal-open{overflow:hidden}
 .svc__cats{display:flex;flex-direction:column;gap:48px}
 .svc__cat-grp{}
 .svc__cat-lbl{display:block;margin-bottom:16px;color:rgba(9,11,13,.4);letter-spacing:.12em}
-.svc__grid--gfx{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.svc__grid--gfx .svc__thumb{aspect-ratio:16/10}
+.svc__grid--gfx{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
 .svc__grid--gfx .svc__item{border-radius:0}
-.svc__grid--gfx .svc__thumb{border-radius:0}
+.svc__grid--gfx .svc__thumb{aspect-ratio:3/4;border-radius:0}
 
 /* shared item styles */
 .svc__item{position:relative;margin:0;cursor:pointer;overflow:hidden;border-radius:4px}
