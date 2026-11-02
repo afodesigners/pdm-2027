@@ -538,6 +538,164 @@
   </div>
 </section>
 
+<!-- ============================== 09B ROUTE MAP (dark) ============================== -->
+<section class="route-map" id="route-map" data-section="route-map" aria-label="PDM 2027 Worldwide Coverage">
+
+  <div class="route-map__stage">
+
+    <svg class="route-map__svg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+      <!-- subtle grid -->
+      <g class="rm-grid">
+        <line x1="0" y1="141" x2="1000" y2="141"/>
+        <line x1="0" y1="177" x2="1000" y2="177"/>
+        <line x1="0" y1="250" x2="1000" y2="250"/>
+        <line x1="0" y1="323" x2="1000" y2="323"/>
+        <line x1="250" y1="0" x2="250" y2="500"/>
+        <line x1="500" y1="0" x2="500" y2="500"/>
+        <line x1="750" y1="0" x2="750" y2="500"/>
+      </g>
+
+      <!-- simplified land masses (Mercator, 1000×500 viewBox) -->
+      <g class="rm-land">
+        <!-- North America -->
+        <path d="M42,148 C80,110 200,108 316,118 L346,155 L320,172 L295,186 L278,215 L248,206 L230,213 L248,235 L208,228 L191,221 L160,200 L150,168 L119,145 Z"/>
+        <!-- South America -->
+        <path d="M220,285 L250,287 L282,299 L308,326 L320,352 L326,380 L312,416 L296,445 L264,464 L243,480 L238,463 L224,430 L199,397 L191,365 L196,332 L210,307 Z"/>
+        <!-- Greenland -->
+        <path d="M290,68 L314,58 L346,65 L356,82 L340,98 L308,99 L278,86 Z"/>
+        <!-- UK -->
+        <path d="M474,145 L482,140 L492,143 L491,160 L482,165 L474,158 Z"/>
+        <!-- Europe mainland -->
+        <path d="M476,197 L480,174 L484,162 L488,142 L506,140 L521,140 L540,131 L547,121 L544,110 L532,107 L518,108 L510,120 L498,128 L490,131 L480,145 L476,162 L483,165 L508,185 L484,190 Z"/>
+        <!-- Iberian peninsula -->
+        <path d="M478,162 L480,176 L483,186 L492,196 L505,197 L516,192 L521,181 L519,168 L509,165 L498,162 Z"/>
+        <!-- Italy -->
+        <path d="M510,165 L520,168 L528,178 L537,186 L540,198 L528,212 L518,213 L511,199 L508,186 Z"/>
+        <!-- Africa -->
+        <path d="M485,197 L601,202 L642,235 L612,258 L600,278 L572,304 L550,303 L524,281 L514,266 L530,250 L516,252 L497,253 L453,237 L453,219 Z"/>
+        <!-- Russia + Asia -->
+        <path d="M545,100 L615,80 L670,78 L730,82 L792,88 L852,100 L900,115 L910,130 L904,145 L882,156 L860,162 L875,188 L882,205 L872,220 L848,227 L828,242 L804,247 L768,250 L738,252 L718,250 L698,254 L676,250 L656,238 L645,218 L630,208 L616,214 L606,222 L594,215 L587,205 L570,208 L558,198 L543,215 L538,194 L548,180 L540,160 L536,143 L542,128 L548,114 Z"/>
+        <!-- Indian subcontinent -->
+        <path d="M618,214 L638,210 L652,220 L662,238 L660,258 L648,278 L634,292 L618,296 L606,286 L602,265 L610,245 Z"/>
+        <!-- SE Asia -->
+        <path d="M740,252 L762,257 L782,262 L793,274 L786,290 L764,292 L748,286 L736,273 Z"/>
+        <!-- Japan -->
+        <path d="M874,168 L884,162 L897,165 L906,175 L898,186 L882,183 Z"/>
+        <!-- Australia -->
+        <path d="M820,296 L848,286 L879,286 L908,297 L928,318 L940,342 L934,364 L916,380 L893,390 L864,392 L840,381 L821,363 L810,342 L812,318 Z"/>
+      </g>
+
+      <!-- animated route lines — JS sets dasharray/dashoffset and transitions -->
+      <g class="rm-routes">
+        <path class="rm-route" d="M277,213 C340,130 440,130 500,166"/>
+        <path class="rm-route" d="M500,166 C508,165 515,170 521,179"/>
+        <path class="rm-route" d="M521,179 C528,176 532,173 538,170"/>
+        <path class="rm-route" d="M538,170 C525,178 512,181 506,184"/>
+        <path class="rm-route" d="M506,184 C555,185 605,200 654,213"/>
+        <path class="rm-route" d="M654,213 C720,165 808,168 888,195"/>
+        <path class="rm-route" d="M888,195 C895,252 900,278 903,310"/>
+      </g>
+
+      <!-- city markers -->
+      <g class="rm-markers">
+        <g class="rm-marker" data-city-id="miami" role="button" tabindex="0" aria-label="Open Miami">
+          <circle class="rm-ring" cx="277" cy="213" r="9"/>
+          <circle class="rm-dot"  cx="277" cy="213" r="4"/>
+          <text class="rm-name"  x="265" y="206" text-anchor="end">MIAMI</text>
+          <text class="rm-coord" x="265" y="215" text-anchor="end">25.7617° N</text>
+          <text class="rm-coord" x="265" y="223" text-anchor="end">80.1918° W</text>
+        </g>
+        <g class="rm-marker" data-city-id="london" role="button" tabindex="0" aria-label="Open London">
+          <circle class="rm-ring" cx="500" cy="166" r="9"/>
+          <circle class="rm-dot"  cx="500" cy="166" r="4"/>
+          <text class="rm-name"  x="488" y="157" text-anchor="end">LONDON</text>
+          <text class="rm-coord" x="488" y="167" text-anchor="end">51.5074° N</text>
+          <text class="rm-coord" x="488" y="175" text-anchor="end">0.1278° W</text>
+        </g>
+        <g class="rm-marker" data-city-id="monaco" role="button" tabindex="0" aria-label="Open Monaco">
+          <circle class="rm-ring" cx="521" cy="179" r="9"/>
+          <circle class="rm-dot"  cx="521" cy="179" r="4"/>
+          <text class="rm-name"  x="532" y="172" text-anchor="start">MONACO</text>
+          <text class="rm-coord" x="532" y="182" text-anchor="start">43.7384° N</text>
+          <text class="rm-coord" x="532" y="190" text-anchor="start">7.4246° E</text>
+        </g>
+        <g class="rm-marker" data-city-id="monza" role="button" tabindex="0" aria-label="Open Monza">
+          <circle class="rm-ring" cx="538" cy="170" r="9"/>
+          <circle class="rm-dot"  cx="538" cy="170" r="4"/>
+          <text class="rm-name"  x="550" y="163" text-anchor="start">MONZA</text>
+          <text class="rm-coord" x="550" y="173" text-anchor="start">45.6156° N</text>
+          <text class="rm-coord" x="550" y="181" text-anchor="start">9.2811° E</text>
+        </g>
+        <g class="rm-marker" data-city-id="barcelona" role="button" tabindex="0" aria-label="Open Barcelona">
+          <circle class="rm-ring" cx="506" cy="184" r="9"/>
+          <circle class="rm-dot"  cx="506" cy="184" r="4"/>
+          <text class="rm-name"  x="494" y="198" text-anchor="end">BARCELONA</text>
+          <text class="rm-coord" x="494" y="207" text-anchor="end">41.3851° N</text>
+          <text class="rm-coord" x="494" y="215" text-anchor="end">2.1734° E</text>
+        </g>
+        <g class="rm-marker" data-city-id="dubai" role="button" tabindex="0" aria-label="Open Dubai">
+          <circle class="rm-ring" cx="654" cy="213" r="9"/>
+          <circle class="rm-dot"  cx="654" cy="213" r="4"/>
+          <text class="rm-name"  x="666" y="206">DUBAI</text>
+          <text class="rm-coord" x="666" y="216">25.2048° N</text>
+          <text class="rm-coord" x="666" y="224">55.2708° E</text>
+        </g>
+        <g class="rm-marker" data-city-id="tokyo" role="button" tabindex="0" aria-label="Open Tokyo">
+          <circle class="rm-ring" cx="888" cy="195" r="9"/>
+          <circle class="rm-dot"  cx="888" cy="195" r="4"/>
+          <text class="rm-name"  x="876" y="185" text-anchor="end">TOKYO</text>
+          <text class="rm-coord" x="876" y="195" text-anchor="end">35.6762° N</text>
+          <text class="rm-coord" x="876" y="203" text-anchor="end">139.6503° E</text>
+        </g>
+        <g class="rm-marker" data-city-id="melbourne" role="button" tabindex="0" aria-label="Open Melbourne">
+          <circle class="rm-ring" cx="903" cy="310" r="9"/>
+          <circle class="rm-dot"  cx="903" cy="310" r="4"/>
+          <text class="rm-name"  x="891" y="326" text-anchor="end">MELBOURNE</text>
+          <text class="rm-coord" x="891" y="336" text-anchor="end">37.8136° S</text>
+          <text class="rm-coord" x="891" y="344" text-anchor="end">144.9631° E</text>
+        </g>
+      </g>
+
+    </svg>
+
+    <!-- header overlay -->
+    <p class="rm-hd-title label" aria-hidden="true">PDM MOTORSPORT / MEDIA</p>
+    <div class="rm-hd-rule" aria-hidden="true"></div>
+
+    <!-- footer overlay -->
+    <div class="rm-footer" aria-hidden="true">
+      <ul class="rm-city-list">
+        <li>DUBAI</li><li>LONDON</li><li>MONACO</li><li>MONZA</li>
+        <li>BARCELONA</li><li>MIAMI</li><li>MELBOURNE</li><li>TOKYO</li>
+      </ul>
+      <div class="rm-tagline">
+        <p class="rm-tagline__t1">ONE TEAM.</p>
+        <p class="rm-tagline__t2">NO FIXED ADDRESS.</p>
+        <div class="rm-tagline__rule"></div>
+        <p class="rm-tagline__sub label">2027 / WORLDWIDE</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- slide-in panel -->
+  <div class="rm-panel" data-rm-panel aria-hidden="true" role="dialog" aria-modal="true" aria-label="City details">
+    <button class="rm-panel__close" data-rm-close aria-label="Close city panel">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 1l14 14M15 1L1 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <figure class="rm-panel__fig">
+      <img class="rm-panel__img" data-rm-img src="" alt="">
+    </figure>
+    <div class="rm-panel__body">
+      <span class="label rm-panel__cat" data-rm-cat></span>
+      <h3 class="rm-panel__city d" data-rm-city></h3>
+      <p class="rm-panel__coords" data-rm-coords></p>
+    </div>
+  </div>
+
+</section>
+
 <!-- ============================== 10 BANNER (dark, pinned journey closer) ============================== -->
 <section class="banner" id="banner" data-section="banner" aria-label="Every lap. Everything around it.">
   <div class="banner__stage">

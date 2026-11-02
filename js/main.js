@@ -1223,3 +1223,82 @@ window.scrollTo(0, 0);
     });
   });
 })();
+
+/* ============================= Route Map ============================= */
+(function () {
+  const CITIES = {
+    miami:     { name: 'Miami',     cat: 'Americas · Florida',              coords: '25.7617° N\n80.1918° W', img: 'assets/img/p-celebrate.jpg' },
+    london:    { name: 'London',    cat: 'Europe · United Kingdom',         coords: '51.5074° N\n0.1278° W',  img: 'assets/img/cars-donington.jpg' },
+    monaco:    { name: 'Monaco',    cat: 'Europe · Principality of Monaco', coords: '43.7384° N\n7.4246° E',  img: 'assets/img/p-cockpit-monaco.jpg' },
+    monza:     { name: 'Monza',     cat: 'Europe · Italy',                  coords: '45.6156° N\n9.2811° E',  img: 'assets/img/ph-h-race-start.jpg' },
+    barcelona: { name: 'Barcelona', cat: 'Europe · Spain',                  coords: '41.3851° N\n2.1734° E',  img: 'assets/img/p-race-duel.jpg' },
+    dubai:     { name: 'Dubai',     cat: 'Middle East · UAE',               coords: '25.2048° N\n55.2708° E', img: 'assets/img/cars-f4-uae.jpg' },
+    tokyo:     { name: 'Tokyo',     cat: 'Asia · Japan',                    coords: '35.6762° N\n139.6503° E',img: 'assets/img/cars-adam-gtwc.jpg' },
+    melbourne: { name: 'Melbourne', cat: 'Oceania · Australia',             coords: '37.8136° S\n144.9631° E',img: 'assets/img/cars-alex-melbourne.jpg' },
+  };
+
+  const section  = document.getElementById('route-map');
+  const panel    = document.querySelector('[data-rm-panel]');
+  const closeBtn = document.querySelector('[data-rm-close]');
+  const imgEl    = document.querySelector('[data-rm-img]');
+  const cityEl   = document.querySelector('[data-rm-city]');
+  const catEl    = document.querySelector('[data-rm-cat]');
+  const coordsEl = document.querySelector('[data-rm-coords]');
+
+  if (!section || !panel) return;
+
+  /* ---- route line animation ---- */
+  const routes = section.querySelectorAll('.rm-route');
+  routes.forEach(r => {
+    const len = r.getTotalLength();
+    r.style.strokeDasharray  = len;
+    r.style.strokeDashoffset = len;
+  });
+
+  const routeObs = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    routes.forEach((r, i) => {
+      r.style.transition = `stroke-dashoffset 1.6s ease ${i * 0.28}s`;
+      r.style.strokeDashoffset = 0;
+    });
+    routeObs.unobserve(section);
+  }, { threshold: 0.15 });
+  routeObs.observe(section);
+
+  /* ---- panel open / close ---- */
+  function openCity(id) {
+    const c = CITIES[id];
+    if (!c) return;
+    imgEl.src      = c.img;
+    imgEl.alt      = c.name;
+    cityEl.textContent   = c.name;
+    catEl.textContent    = c.cat;
+    coordsEl.textContent = c.coords;
+    panel.setAttribute('aria-hidden', 'false');
+    panel.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+
+  function closePanel() {
+    panel.classList.remove('is-open');
+    panel.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  section.querySelectorAll('.rm-marker').forEach(m => {
+    m.addEventListener('click', () => openCity(m.dataset.cityId));
+    m.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCity(m.dataset.cityId); }
+    });
+  });
+
+  closeBtn.addEventListener('click', closePanel);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && panel.classList.contains('is-open')) closePanel();
+  });
+
+  /* close on backdrop click (outside panel) */
+  panel.addEventListener('click', e => { if (e.target === panel) closePanel(); });
+}());
