@@ -1259,20 +1259,20 @@ window.scrollTo(0, 0);
   const routeCoords = CITIES.map(c => [c.lat, c.lng]);
   const routeLine = L.polyline(routeCoords, {
     color: '#00aeef',
-    weight: 2,
-    opacity: 0.9,
-    dashArray: '6 4'
+    weight: 2.5,
+    opacity: 0.95
   }).addTo(map);
 
   map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
 
   /* ---- popup card builder ---- */
-  function cardHTML(c) {
+  function cardHTML(c, stopNum) {
     return `
       <div class="rm-card__photo">
         <img src="${c.img}" alt="${c.name}" loading="lazy">
-        <button class="rm-card__photo-close" onclick="this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button') && this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button').click()" aria-label="Close">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="rm-card__stop">${stopNum}</span>
+        <button class="rm-card__photo-close" onclick="(function(b){var p=b.closest('.leaflet-popup');if(p){var cb=p.querySelector('.leaflet-popup-close-button');if(cb)cb.click();}})(this)" aria-label="Close">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </button>
       </div>
       <div class="rm-card__body">
@@ -1296,18 +1296,25 @@ window.scrollTo(0, 0);
   }
 
   /* ---- markers ---- */
-  CITIES.forEach(c => {
+  CITIES.forEach((c, i) => {
+    const stopNum = i + 1;
+    const isPhoto = i === 0;
+    const sz = isPhoto ? 52 : 36;
+    const iconHtml = isPhoto
+      ? `<div class="rm-photo-marker"><img src="${c.img}" alt="${c.name}" loading="lazy"></div>`
+      : `<div class="rm-num-marker">${stopNum}</div>`;
+
     const icon = L.divIcon({
       className: '',
-      html: `<div class="rm-pin"><div class="rm-pin__lbl">${c.name.toUpperCase()}</div><div class="rm-pin__dot"></div></div>`,
-      iconSize: [1, 1],
-      iconAnchor: [0, 0],
-      popupAnchor: [0, -28]
+      html: iconHtml,
+      iconSize: [sz, sz],
+      iconAnchor: [sz / 2, sz / 2],
+      popupAnchor: [0, -(sz / 2 + 8)]
     });
 
     const marker = L.marker([c.lat, c.lng], { icon, title: c.name });
 
-    marker.bindPopup(cardHTML(c), {
+    marker.bindPopup(cardHTML(c, stopNum), {
       className: 'rm-popup',
       closeButton: true,
       maxWidth: 300,
