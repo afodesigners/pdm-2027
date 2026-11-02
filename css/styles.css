@@ -204,17 +204,17 @@ html.lenis,html.lenis body{height:auto}
 .lenis.lenis-stopped{overflow:hidden}
 
 /* ---------- banner (pinned) ---------- */
-.banner{position:relative;height:100svh;min-height:640px;background:var(--ink);overflow:hidden}
+.banner{position:relative;height:100svh;min-height:640px;background:var(--paper);overflow:hidden;color:var(--ink)}
 .banner__stage{position:absolute;inset:0;display:grid;grid-template-columns:1.15fr .85fr;overflow:hidden}
 .banner__p{position:relative;overflow:hidden}
 .banner__p img{position:absolute;inset:-6% 0;width:100%;height:112%;object-fit:cover}
 .banner__p--l img{filter:saturate(.9)}
-.banner__shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(9,11,13,.9) 0%,rgba(9,11,13,.25) 55%,rgba(9,11,13,.5) 100%),linear-gradient(90deg,rgba(9,11,13,.6),rgba(9,11,13,0) 60%);z-index:2;pointer-events:none}
-.banner__tl{position:absolute;left:var(--gut);top:calc(var(--head) + 28px);z-index:3}
-.banner__br{position:absolute;right:var(--gut);bottom:34px;z-index:3}
+.banner__shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(242,243,241,.96) 0%,rgba(242,243,241,.2) 55%,rgba(242,243,241,.45) 100%),linear-gradient(90deg,rgba(242,243,241,.72),rgba(242,243,241,0) 60%);z-index:2;pointer-events:none}
+.banner__tl{position:absolute;left:var(--gut);top:calc(var(--head) + 28px);z-index:3;color:var(--mute-l)}
+.banner__br{position:absolute;right:var(--gut);bottom:34px;z-index:3;color:var(--mute-l)}
 .banner__txt{position:absolute;left:var(--gut);right:var(--gut);bottom:clamp(60px,12vh,120px);z-index:3}
-.banner__txt h2{font-size:clamp(52px,9vw,150px);line-height:.9;text-wrap:balance;max-width:11ch}
-.banner__sub{margin-top:22px;font-size:clamp(16px,1.5vw,22px);color:rgba(255,255,255,.88)}
+.banner__txt h2{font-size:clamp(52px,9vw,150px);line-height:.9;text-wrap:balance;max-width:11ch;color:var(--ink)}
+.banner__sub{margin-top:22px;font-size:clamp(16px,1.5vw,22px);color:var(--mute-l)}
 .banner__cta{margin-top:clamp(28px,3.5vh,48px);pointer-events:all}
 
 /* === REEL (scroll-scale cinematic, sticky 300vh desktop / static mobile) === */
