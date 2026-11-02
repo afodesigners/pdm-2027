@@ -1317,13 +1317,14 @@ window.scrollTo(0, 0);
 
     const marker = L.marker([c.lat, c.lng], { icon, title: c.name });
 
+    const isMobile = window.innerWidth <= 768;
     marker.bindPopup(cardHTML(c, stopNum), {
       className: 'rm-popup',
       closeButton: true,
-      maxWidth: 300,
-      minWidth: 300,
+      maxWidth: isMobile ? window.innerWidth - 32 : 300,
+      minWidth: isMobile ? 0 : 300,
       autoPan: true,
-      autoPanPadding: [20, 20]
+      autoPanPadding: isMobile ? [16, 60] : [20, 20]
     });
 
     marker.addTo(map);

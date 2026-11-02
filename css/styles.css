@@ -656,13 +656,40 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
 .leaflet-control-attribution a{color:rgba(255,255,255,.5)!important}
 
 @media(max-width:768px){
-  .route-map{height:85svh}
-  .rm-footer{flex-direction:column;align-items:center;gap:12px;bottom:12px}
-  .rm-tagline{text-align:center}
-  .rm-tagline__t1,.rm-tagline__t2{font-size:clamp(16px,4vw,28px)}
-  .rm-route-widget{width:100%;max-width:280px}
-  .rm-popup .leaflet-popup-content-wrapper{width:280px}
-  .rm-popup .leaflet-popup-content{width:280px!important}
+  /* map full height on mobile */
+  .route-map{height:100svh;min-height:480px}
+
+  /* HUD — tighter spacing */
+  .rm-hud{top:clamp(56px,8vh,72px);left:16px}
+  .rm-hud__label{font-size:10px}
+  .rm-hud__city{font-size:clamp(20px,7vw,34px)}
+
+  /* footer — row, left-aligned; hide route widget to reduce clutter */
+  .rm-footer{flex-direction:row;align-items:flex-end;justify-content:flex-start;bottom:20px;padding-inline:16px;gap:0}
+  .rm-tagline{text-align:left}
+  .rm-tagline__t1,.rm-tagline__t2{font-size:clamp(13px,4.5vw,22px)}
+  .rm-tagline__rule{margin:5px 0}
+  .rm-route-widget{display:none}
+
+  /* popup card — responsive width, compact photo */
+  .rm-popup .leaflet-popup-content-wrapper{width:calc(100vw - 32px)!important;max-width:320px!important;min-width:0!important}
+  .rm-popup .leaflet-popup-content{width:100%!important}
+  .rm-card__photo{height:145px}
+  .rm-card__body{padding:12px 14px 14px}
+  .rm-card__city{font-size:17px}
+  .rm-card__region{font-size:12px}
+  .rm-card__coords{font-size:11px;margin-bottom:8px}
+  .rm-card__stats{gap:12px;padding-top:10px}
+  .rm-card__stat{font-size:11px}
+  .rm-card__stop{width:24px;height:24px;font-size:11px}
+  .rm-card__photo-close{width:26px;height:26px}
+}
+
+@media(max-width:480px){
+  .rm-hud{top:60px}
+  .rm-hud__city{font-size:clamp(18px,7.5vw,28px)}
+  .rm-popup .leaflet-popup-content-wrapper{width:calc(100vw - 24px)!important}
+  .rm-card__photo{height:125px}
 }
 
 @media (prefers-reduced-motion:reduce){
