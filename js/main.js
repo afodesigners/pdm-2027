@@ -1343,9 +1343,15 @@ window.scrollTo(0, 0);
   const hudNum  = hudEl && hudEl.querySelector('.rm-hud__num');
   const hudCity = hudEl && hudEl.querySelector('.rm-hud__city');
 
-  let stateCity     = -1;   // which city is currently active
-  let stateCardOpen = false; // whether the popup is open
-  let openTimer     = null;  // pending setTimeout for popup open
+  let stateCity     = -1;
+  let stateCardOpen = false;
+  let openTimer     = null;
+  let pendingMoveEnd = null; // moveend listener waiting to open popup
+
+  function clearPending() {
+    if (openTimer)      { clearTimeout(openTimer); openTimer = null; }
+    if (pendingMoveEnd) { map.off('moveend', pendingMoveEnd); pendingMoveEnd = null; }
+  }
 
   function handleMapState(cityIdx, shouldOpen) {
     const cityChanged = cityIdx !== stateCity;
@@ -1358,7 +1364,7 @@ window.scrollTo(0, 0);
       stateCity = cityIdx;
       const c = CITIES[cityIdx];
 
-      if (openTimer) { clearTimeout(openTimer); openTimer = null; }
+      clearPending();
       map.closePopup();
       map.flyTo([c.lat, c.lng], 7, { duration: 0.85, animate: true });
 
@@ -1401,13 +1407,23 @@ window.scrollTo(0, 0);
     if (cityChanged || cardChanged) {
       stateCardOpen = shouldOpen;
       if (shouldOpen) {
-        /* delay popup until fly animation finishes */
-        if (openTimer) clearTimeout(openTimer);
-        openTimer = setTimeout(() => {
-          if (stateCity === cityIdx && stateCardOpen) markerRefs[cityIdx].openPopup();
-          openTimer = null;
-        }, cityChanged ? 900 : 80);
+        clearPending();
+        if (cityChanged) {
+          /* open popup only after the fly animation actually finishes */
+          pendingMoveEnd = function onMoveEnd() {
+            pendingMoveEnd = null;
+            if (stateCity === cityIdx && stateCardOpen) markerRefs[cityIdx].openPopup();
+          };
+          map.once('moveend', pendingMoveEnd);
+        } else {
+          /* city unchanged, re-open immediately (e.g. user scrolled back) */
+          openTimer = setTimeout(() => {
+            if (stateCity === cityIdx && stateCardOpen) markerRefs[cityIdx].openPopup();
+            openTimer = null;
+          }, 60);
+        }
       } else {
+        clearPending();
         map.closePopup();
       }
     }
@@ -1426,7 +1442,7 @@ window.scrollTo(0, 0);
       handleMapState(city, local < 0.65);  /* open for first 65%, close for last 35% */
     },
     onLeaveBack() {
-      if (openTimer) { clearTimeout(openTimer); openTimer = null; }
+      clearPending();
       map.closePopup();
       stateCity     = -1;
       stateCardOpen = false;
