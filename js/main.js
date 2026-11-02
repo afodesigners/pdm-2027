@@ -1338,77 +1338,105 @@ window.scrollTo(0, 0);
     }).addTo(map)
   );
 
-  /* ---- GSAP scroll-driven city tour ---- */
-  let activeStop = -1;
+  /* ---- GSAP scroll tour — two-phase per city (fly+open, close) ---- */
   const hudEl   = document.getElementById('rm-hud');
   const hudNum  = hudEl && hudEl.querySelector('.rm-hud__num');
   const hudCity = hudEl && hudEl.querySelector('.rm-hud__city');
 
-  function activateStop(idx) {
-    if (idx === activeStop) return;
-    activeStop = idx;
-    const c = CITIES[idx];
+  let stateCity     = -1;   // which city is currently active
+  let stateCardOpen = false; // whether the popup is open
+  let openTimer     = null;  // pending setTimeout for popup open
 
-    /* fly map to city */
-    map.flyTo([c.lat, c.lng], 7, { duration: 0.85, animate: true });
+  function handleMapState(cityIdx, shouldOpen) {
+    const cityChanged = cityIdx !== stateCity;
+    const cardChanged = shouldOpen !== stateCardOpen;
+    if (!cityChanged && !cardChanged) return;
 
-    /* toggle active class on markers */
-    markerRefs.forEach((m, i) => {
-      const el = m.getElement();
-      if (!el) return;
-      const dot = el.querySelector('.rm-num-marker, .rm-photo-marker');
-      if (dot) dot.classList.toggle('is-active', i === idx);
-    });
+    /* ---- new city ---- */
+    if (cityChanged) {
+      const isFirst = stateCity < 0;
+      stateCity = cityIdx;
+      const c = CITIES[cityIdx];
 
-    /* animate each segment in/out */
-    segments.forEach((seg, i) => {
-      const target = i < idx ? 0.9 : 0;
-      gsap.to(segStates[i], {
-        opacity: target,
-        duration: 0.45,
-        ease: 'power2.out',
-        overwrite: true,
-        onUpdate() { seg.setStyle({ opacity: segStates[i].opacity }); }
-      });
-    });
+      if (openTimer) { clearTimeout(openTimer); openTimer = null; }
+      map.closePopup();
+      map.flyTo([c.lat, c.lng], 7, { duration: 0.85, animate: true });
 
-    /* update HUD */
-    if (hudEl) {
-      if (hudNum)  hudNum.textContent  = String(idx + 1).padStart(2, '0');
-      if (hudCity) {
-        gsap.to(hudCity, { opacity: 0, y: -6, duration: 0.15, ease: 'power1.in', onComplete() {
-          hudCity.textContent = c.name.toUpperCase();
-          gsap.to(hudCity, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' });
-        }});
-      }
-      if (activeStop === 0) gsap.to(hudEl, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
-    }
-  }
-
-  /* pin section and step through cities as user scrolls */
-  ScrollTrigger.create({
-    trigger: '#route-map',
-    start: 'top top',
-    end: '+=700%',
-    pin: true,
-    onUpdate(self) {
-      const idx = Math.min(Math.floor(self.progress * 8), 7);
-      activateStop(idx);
-    },
-    onLeaveBack() {
-      /* reset to overview when scrolling back above the section */
-      activeStop = -1;
-      gsap.to(hudEl, { opacity: 0, duration: 0.3 });
-      markerRefs.forEach(m => {
+      /* marker active states */
+      markerRefs.forEach((m, i) => {
         const el = m.getElement();
         if (!el) return;
         const dot = el.querySelector('.rm-num-marker, .rm-photo-marker');
-        if (dot) dot.classList.remove('is-active');
+        if (dot) dot.classList.toggle('is-active', i === cityIdx);
       });
+
+      /* route segment progress */
       segments.forEach((seg, i) => {
-        segStates[i].opacity = 0;
-        seg.setStyle({ opacity: 0 });
+        const target = i < cityIdx ? 0.9 : 0;
+        gsap.to(segStates[i], {
+          opacity: target, duration: 0.45, ease: 'power2.out', overwrite: true,
+          onUpdate() { seg.setStyle({ opacity: segStates[i].opacity }); }
+        });
       });
+
+      /* HUD */
+      if (hudEl) {
+        if (hudNum) hudNum.textContent = String(cityIdx + 1).padStart(2, '0');
+        if (isFirst) {
+          if (hudCity) hudCity.textContent = c.name.toUpperCase();
+          gsap.to(hudEl, { opacity: 1, duration: 0.5 });
+        } else if (hudCity) {
+          gsap.to(hudCity, {
+            opacity: 0, y: -8, duration: 0.15, ease: 'power1.in',
+            onComplete() {
+              hudCity.textContent = c.name.toUpperCase();
+              gsap.to(hudCity, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' });
+            }
+          });
+        }
+      }
+    }
+
+    /* ---- open / close card ---- */
+    if (cityChanged || cardChanged) {
+      stateCardOpen = shouldOpen;
+      if (shouldOpen) {
+        /* delay popup until fly animation finishes */
+        if (openTimer) clearTimeout(openTimer);
+        openTimer = setTimeout(() => {
+          if (stateCity === cityIdx && stateCardOpen) markerRefs[cityIdx].openPopup();
+          openTimer = null;
+        }, cityChanged ? 900 : 80);
+      } else {
+        map.closePopup();
+      }
+    }
+  }
+
+  /* each city = 100% of viewport scroll; first 65% → card open, last 35% → card closed */
+  ScrollTrigger.create({
+    trigger: '#route-map',
+    start: 'top top',
+    end: '+=800%',   /* 8 cities × 100svh each */
+    pin: true,
+    onUpdate(self) {
+      const raw   = self.progress * 8;
+      const city  = Math.min(Math.floor(raw), 7);
+      const local = raw - city;            /* 0–1 within this city's scroll range */
+      handleMapState(city, local < 0.65);  /* open for first 65%, close for last 35% */
+    },
+    onLeaveBack() {
+      if (openTimer) { clearTimeout(openTimer); openTimer = null; }
+      map.closePopup();
+      stateCity     = -1;
+      stateCardOpen = false;
+      if (hudEl) gsap.to(hudEl, { opacity: 0, duration: 0.3 });
+      markerRefs.forEach(m => {
+        const el = m.getElement();
+        if (!el) return;
+        el.querySelector('.rm-num-marker, .rm-photo-marker')?.classList.remove('is-active');
+      });
+      segments.forEach((seg, i) => { segStates[i].opacity = 0; seg.setStyle({ opacity: 0 }); });
       map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
     }
   });
