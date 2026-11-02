@@ -1256,12 +1256,12 @@ window.scrollTo(0, 0);
 
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  /* ---- route polyline ---- */
+  /* ---- ghost route (full overview) ---- */
   const routeCoords = CITIES.map(c => [c.lat, c.lng]);
   const routeLine = L.polyline(routeCoords, {
     color: '#00aeef',
-    weight: 2.5,
-    opacity: 0.95
+    weight: 1.5,
+    opacity: 0.18
   }).addTo(map);
 
   map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
@@ -1297,6 +1297,8 @@ window.scrollTo(0, 0);
   }
 
   /* ---- markers ---- */
+  const markerRefs = [];
+
   CITIES.forEach((c, i) => {
     const stopNum = i + 1;
     const isPhoto = i === 0;
@@ -1325,5 +1327,89 @@ window.scrollTo(0, 0);
     });
 
     marker.addTo(map);
+    markerRefs.push(marker);
+  });
+
+  /* ---- per-segment progress lines (animated in as stops are reached) ---- */
+  const segStates = CITIES.slice(0, -1).map(() => ({ opacity: 0 }));
+  const segments  = CITIES.slice(0, -1).map((c, i) =>
+    L.polyline([[c.lat, c.lng], [CITIES[i + 1].lat, CITIES[i + 1].lng]], {
+      color: '#00aeef', weight: 2.5, opacity: 0
+    }).addTo(map)
+  );
+
+  /* ---- GSAP scroll-driven city tour ---- */
+  let activeStop = -1;
+  const hudEl   = document.getElementById('rm-hud');
+  const hudNum  = hudEl && hudEl.querySelector('.rm-hud__num');
+  const hudCity = hudEl && hudEl.querySelector('.rm-hud__city');
+
+  function activateStop(idx) {
+    if (idx === activeStop) return;
+    activeStop = idx;
+    const c = CITIES[idx];
+
+    /* fly map to city */
+    map.flyTo([c.lat, c.lng], 7, { duration: 0.85, animate: true });
+
+    /* toggle active class on markers */
+    markerRefs.forEach((m, i) => {
+      const el = m.getElement();
+      if (!el) return;
+      const dot = el.querySelector('.rm-num-marker, .rm-photo-marker');
+      if (dot) dot.classList.toggle('is-active', i === idx);
+    });
+
+    /* animate each segment in/out */
+    segments.forEach((seg, i) => {
+      const target = i < idx ? 0.9 : 0;
+      gsap.to(segStates[i], {
+        opacity: target,
+        duration: 0.45,
+        ease: 'power2.out',
+        overwrite: true,
+        onUpdate() { seg.setStyle({ opacity: segStates[i].opacity }); }
+      });
+    });
+
+    /* update HUD */
+    if (hudEl) {
+      if (hudNum)  hudNum.textContent  = String(idx + 1).padStart(2, '0');
+      if (hudCity) {
+        gsap.to(hudCity, { opacity: 0, y: -6, duration: 0.15, ease: 'power1.in', onComplete() {
+          hudCity.textContent = c.name.toUpperCase();
+          gsap.to(hudCity, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' });
+        }});
+      }
+      if (activeStop === 0) gsap.to(hudEl, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+    }
+  }
+
+  /* pin section and step through cities as user scrolls */
+  ScrollTrigger.create({
+    trigger: '#route-map',
+    start: 'top top',
+    end: '+=700%',
+    pin: true,
+    onUpdate(self) {
+      const idx = Math.min(Math.floor(self.progress * 8), 7);
+      activateStop(idx);
+    },
+    onLeaveBack() {
+      /* reset to overview when scrolling back above the section */
+      activeStop = -1;
+      gsap.to(hudEl, { opacity: 0, duration: 0.3 });
+      markerRefs.forEach(m => {
+        const el = m.getElement();
+        if (!el) return;
+        const dot = el.querySelector('.rm-num-marker, .rm-photo-marker');
+        if (dot) dot.classList.remove('is-active');
+      });
+      segments.forEach((seg, i) => {
+        segStates[i].opacity = 0;
+        seg.setStyle({ opacity: 0 });
+      });
+      map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
+    }
   });
 }());
