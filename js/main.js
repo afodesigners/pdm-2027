@@ -1224,81 +1224,98 @@ window.scrollTo(0, 0);
   });
 })();
 
-/* ============================= Route Map ============================= */
+/* ============================= Route Map (Leaflet) ============================= */
 (function () {
-  const CITIES = {
-    miami:     { name: 'Miami',     cat: 'Americas · Florida',              coords: '25.7617° N\n80.1918° W', img: 'assets/img/p-celebrate.jpg' },
-    london:    { name: 'London',    cat: 'Europe · United Kingdom',         coords: '51.5074° N\n0.1278° W',  img: 'assets/img/cars-donington.jpg' },
-    monaco:    { name: 'Monaco',    cat: 'Europe · Principality of Monaco', coords: '43.7384° N\n7.4246° E',  img: 'assets/img/p-cockpit-monaco.jpg' },
-    monza:     { name: 'Monza',     cat: 'Europe · Italy',                  coords: '45.6156° N\n9.2811° E',  img: 'assets/img/ph-h-race-start.jpg' },
-    barcelona: { name: 'Barcelona', cat: 'Europe · Spain',                  coords: '41.3851° N\n2.1734° E',  img: 'assets/img/p-race-duel.jpg' },
-    dubai:     { name: 'Dubai',     cat: 'Middle East · UAE',               coords: '25.2048° N\n55.2708° E', img: 'assets/img/cars-f4-uae.jpg' },
-    tokyo:     { name: 'Tokyo',     cat: 'Asia · Japan',                    coords: '35.6762° N\n139.6503° E',img: 'assets/img/cars-adam-gtwc.jpg' },
-    melbourne: { name: 'Melbourne', cat: 'Oceania · Australia',             coords: '37.8136° S\n144.9631° E',img: 'assets/img/cars-alex-melbourne.jpg' },
-  };
+  if (typeof L === 'undefined' || !document.getElementById('rm-map')) return;
 
-  const section  = document.getElementById('route-map');
-  const panel    = document.querySelector('[data-rm-panel]');
-  const closeBtn = document.querySelector('[data-rm-close]');
-  const imgEl    = document.querySelector('[data-rm-img]');
-  const cityEl   = document.querySelector('[data-rm-city]');
-  const catEl    = document.querySelector('[data-rm-cat]');
-  const coordsEl = document.querySelector('[data-rm-coords]');
+  const CITIES = [
+    { id:'miami',     name:'Miami',     cat:'Americas',    region:'Florida, USA',            coords:'25.7617° N, 80.1918° W', lat:25.7617,  lng:-80.1918, img:'assets/img/p-celebrate.jpg' },
+    { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/cars-donington.jpg' },
+    { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/p-cockpit-monaco.jpg' },
+    { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/ph-h-race-start.jpg' },
+    { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/p-race-duel.jpg' },
+    { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/cars-f4-uae.jpg' },
+    { id:'tokyo',     name:'Tokyo',     cat:'Asia',        region:'Japan',                    coords:'35.6762° N, 139.6503° E',lat:35.6762,  lng:139.6503, img:'assets/img/cars-adam-gtwc.jpg' },
+    { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/cars-alex-melbourne.jpg' },
+  ];
 
-  if (!section || !panel) return;
-
-  /* ---- route line animation ---- */
-  const routes = section.querySelectorAll('.rm-route');
-  routes.forEach(r => {
-    const len = r.getTotalLength();
-    r.style.strokeDasharray  = len;
-    r.style.strokeDashoffset = len;
+  /* ---- init map ---- */
+  const map = L.map('rm-map', {
+    center: [20, 40],
+    zoom: 2,
+    zoomControl: false,
+    scrollWheelZoom: false,
+    attributionControl: true
   });
 
-  const routeObs = new IntersectionObserver(entries => {
-    if (!entries[0].isIntersecting) return;
-    routes.forEach((r, i) => {
-      r.style.transition = `stroke-dashoffset 1.6s ease ${i * 0.28}s`;
-      r.style.strokeDashoffset = 0;
-    });
-    routeObs.unobserve(section);
-  }, { threshold: 0.15 });
-  routeObs.observe(section);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    maxZoom: 19
+  }).addTo(map);
 
-  /* ---- panel open / close ---- */
-  function openCity(id) {
-    const c = CITIES[id];
-    if (!c) return;
-    imgEl.src      = c.img;
-    imgEl.alt      = c.name;
-    cityEl.textContent   = c.name;
-    catEl.textContent    = c.cat;
-    coordsEl.textContent = c.coords;
-    panel.setAttribute('aria-hidden', 'false');
-    panel.classList.add('is-open');
-    document.body.style.overflow = 'hidden';
-    closeBtn.focus();
+  L.control.zoom({ position: 'topright' }).addTo(map);
+
+  /* ---- route polyline ---- */
+  const routeCoords = CITIES.map(c => [c.lat, c.lng]);
+  const routeLine = L.polyline(routeCoords, {
+    color: '#00aeef',
+    weight: 2,
+    opacity: 0.9,
+    dashArray: '6 4'
+  }).addTo(map);
+
+  map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
+
+  /* ---- popup card builder ---- */
+  function cardHTML(c) {
+    return `
+      <div class="rm-card__photo">
+        <img src="${c.img}" alt="${c.name}" loading="lazy">
+        <button class="rm-card__photo-close" onclick="this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button') && this.closest('.leaflet-popup').querySelector('.leaflet-popup-close-button').click()" aria-label="Close">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="rm-card__body">
+        <div class="rm-card__row1">
+          <p class="rm-card__city">${c.name}</p>
+          <span class="rm-card__cat">${c.cat}</span>
+        </div>
+        <p class="rm-card__region">${c.region}</p>
+        <p class="rm-card__coords">${c.coords}</p>
+        <div class="rm-card__stats">
+          <span class="rm-card__stat">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="2" fill="currentColor"/></svg>
+            PDM Coverage
+          </span>
+          <span class="rm-card__stat">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10.5l2.5-4L7 9l2-2.5L12 10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Season 2027
+          </span>
+        </div>
+      </div>`;
   }
 
-  function closePanel() {
-    panel.classList.remove('is-open');
-    panel.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  section.querySelectorAll('.rm-marker').forEach(m => {
-    m.addEventListener('click', () => openCity(m.dataset.cityId));
-    m.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCity(m.dataset.cityId); }
+  /* ---- markers ---- */
+  CITIES.forEach(c => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="rm-pin"><div class="rm-pin__lbl">${c.name.toUpperCase()}</div><div class="rm-pin__dot"></div></div>`,
+      iconSize: [1, 1],
+      iconAnchor: [0, 0],
+      popupAnchor: [0, -28]
     });
+
+    const marker = L.marker([c.lat, c.lng], { icon, title: c.name });
+
+    marker.bindPopup(cardHTML(c), {
+      className: 'rm-popup',
+      closeButton: true,
+      maxWidth: 300,
+      minWidth: 300,
+      autoPan: true,
+      autoPanPadding: [20, 20]
+    });
+
+    marker.addTo(map);
   });
-
-  closeBtn.addEventListener('click', closePanel);
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && panel.classList.contains('is-open')) closePanel();
-  });
-
-  /* close on backdrop click (outside panel) */
-  panel.addEventListener('click', e => { if (e.target === panel) closePanel(); });
 }());
