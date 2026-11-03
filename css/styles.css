@@ -604,6 +604,12 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
 .rm-photo-marker:hover{transform:scale(1.1);box-shadow:0 6px 28px rgba(0,0,0,.7)}
 .rm-photo-marker.is-active{border-color:var(--cyan);transform:scale(1.12);box-shadow:0 0 0 4px rgba(0,174,239,.3),0 4px 24px rgba(0,0,0,.6)}
 
+/* centered card overlay */
+.rm-card-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%);z-index:20;width:300px;pointer-events:none;opacity:0;transition:opacity .28s ease,transform .32s cubic-bezier(.22,1,.36,1)}
+.rm-card-overlay.is-open{pointer-events:all;opacity:1;transform:translate(-50%,-50%)}
+.rm-card-overlay .rm-card{border-radius:14px;overflow:hidden;box-shadow:0 16px 56px rgba(0,0,0,.7),0 4px 16px rgba(0,0,0,.4)}
+.rm-card-overlay #rm-card-img{display:block;width:100%;height:100%;object-fit:cover}
+
 /* scroll HUD */
 .rm-hud{position:absolute;top:clamp(20px,3vw,44px);left:clamp(20px,4.5vw,64px);z-index:10;pointer-events:none;opacity:0}
 .rm-hud__label{font-family:var(--stereo);font-size:11px;letter-spacing:.14em;color:var(--cyan);text-transform:uppercase;display:block;line-height:1;margin-bottom:8px}
@@ -658,6 +664,9 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
 @media(max-width:768px){
   /* map full height on mobile */
   .route-map{height:100svh;min-height:480px}
+
+  /* overlay card — full-width on mobile */
+  .rm-card-overlay{width:calc(100vw - 32px);max-width:340px}
 
   /* HUD — tighter spacing */
   .rm-hud{top:clamp(56px,8vh,72px);left:16px}

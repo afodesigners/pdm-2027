@@ -545,6 +545,37 @@
 
   <div class="route-map__map" id="rm-map" aria-hidden="true"></div>
 
+  <!-- centered city card overlay (populated by JS on demand) -->
+  <div class="rm-card-overlay" id="rm-card-overlay" aria-hidden="true" aria-live="polite">
+    <div class="rm-card">
+      <div class="rm-card__photo">
+        <img id="rm-card-img" src="" alt="" decoding="async">
+        <span class="rm-card__stop" id="rm-card-stop-badge">01</span>
+        <button class="rm-card__photo-close" id="rm-card-close" aria-label="Close">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" aria-hidden="true"><path d="M1 1l9 9M10 1L1 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="rm-card__body">
+        <div class="rm-card__row1">
+          <p class="rm-card__city" id="rm-card-city-name"></p>
+          <span class="rm-card__cat" id="rm-card-cat-name"></span>
+        </div>
+        <p class="rm-card__region" id="rm-card-region-text"></p>
+        <p class="rm-card__coords" id="rm-card-coords-text"></p>
+        <div class="rm-card__stats">
+          <span class="rm-card__stat">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="2" fill="currentColor"/></svg>
+            PDM Coverage
+          </span>
+          <span class="rm-card__stat">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 10.5l2.5-4L7 9l2-2.5L12 10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Season 2027
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- scroll-driven HUD -->
   <div class="rm-hud" id="rm-hud" aria-hidden="true">
     <span class="rm-hud__label">STOP <span class="rm-hud__num">01</span> <span class="rm-hud__of">/ 08</span></span>

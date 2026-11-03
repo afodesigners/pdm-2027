@@ -1230,13 +1230,13 @@ window.scrollTo(0, 0);
 
   const CITIES = [
     { id:'miami',     name:'Miami',     cat:'Americas',    region:'Florida, USA',            coords:'25.7617° N, 80.1918° W', lat:25.7617,  lng:-80.1918, img:'assets/img/p-celebrate.jpg' },
-    { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/cars-donington.jpg' },
+    { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/ph-h-pitwall.jpg' },
     { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/p-cockpit-monaco.jpg' },
     { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/ph-h-race-start.jpg' },
-    { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/p-race-duel.jpg' },
-    { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/cars-f4-uae.jpg' },
-    { id:'tokyo',     name:'Tokyo',     cat:'Asia',        region:'Japan',                    coords:'35.6762° N, 139.6503° E',lat:35.6762,  lng:139.6503, img:'assets/img/cars-adam-gtwc.jpg' },
-    { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/cars-alex-melbourne.jpg' },
+    { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/ph-h-battle.jpg' },
+    { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/p-car-dusk.jpg' },
+    { id:'tokyo',     name:'Tokyo',     cat:'Asia',        region:'Japan',                    coords:'35.6762° N, 139.6503° E',lat:35.6762,  lng:139.6503, img:'assets/img/ph-h-formation.jpg' },
+    { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/ph-h-podium.jpg' },
   ];
 
   /* ---- init map ---- */
@@ -1316,17 +1316,6 @@ window.scrollTo(0, 0);
     });
 
     const marker = L.marker([c.lat, c.lng], { icon, title: c.name });
-
-    const isMobile = window.innerWidth <= 768;
-    marker.bindPopup(cardHTML(c, stopNum), {
-      className: 'rm-popup',
-      closeButton: true,
-      maxWidth: isMobile ? window.innerWidth - 32 : 300,
-      minWidth: isMobile ? 0 : 300,
-      autoPan: true,
-      autoPanPadding: isMobile ? [16, 60] : [20, 20]
-    });
-
     marker.addTo(map);
     markerRefs.push(marker);
   });
@@ -1339,15 +1328,45 @@ window.scrollTo(0, 0);
     }).addTo(map)
   );
 
-  /* ---- GSAP scroll tour — two-phase per city (fly+open, close) ---- */
+  /* ---- custom centered card overlay ---- */
+  const overlayEl     = document.getElementById('rm-card-overlay');
+  const cardImg       = overlayEl && overlayEl.querySelector('#rm-card-img');
+  const cardStopBadge = overlayEl && overlayEl.querySelector('#rm-card-stop-badge');
+  const cardCityName  = overlayEl && overlayEl.querySelector('#rm-card-city-name');
+  const cardCatName   = overlayEl && overlayEl.querySelector('#rm-card-cat-name');
+  const cardRegion    = overlayEl && overlayEl.querySelector('#rm-card-region-text');
+  const cardCoords    = overlayEl && overlayEl.querySelector('#rm-card-coords-text');
+
+  function showCard(idx) {
+    const c = CITIES[idx];
+    if (cardStopBadge) cardStopBadge.textContent = String(idx + 1).padStart(2, '0');
+    if (cardCityName)  cardCityName.textContent  = c.name;
+    if (cardCatName)   cardCatName.textContent   = c.cat;
+    if (cardRegion)    cardRegion.textContent     = c.region;
+    if (cardCoords)    cardCoords.textContent     = c.coords;
+    /* set src here (not in HTML) so the image loads on-demand, not on page load */
+    if (cardImg) { cardImg.alt = c.name; if (cardImg.dataset.src !== c.img) { cardImg.src = c.img; cardImg.dataset.src = c.img; } }
+    if (overlayEl) { overlayEl.setAttribute('aria-hidden', 'false'); overlayEl.classList.add('is-open'); }
+  }
+
+  function hideCard() {
+    if (overlayEl) { overlayEl.classList.remove('is-open'); overlayEl.setAttribute('aria-hidden', 'true'); }
+  }
+
+  overlayEl && overlayEl.querySelector('#rm-card-close')?.addEventListener('click', () => {
+    hideCard();
+    stateCardOpen = false;
+  });
+
+  /* ---- GSAP scroll tour — two-phase per city (fly+show, hide) ---- */
   const hudEl   = document.getElementById('rm-hud');
   const hudNum  = hudEl && hudEl.querySelector('.rm-hud__num');
   const hudCity = hudEl && hudEl.querySelector('.rm-hud__city');
 
-  let stateCity     = -1;
-  let stateCardOpen = false;
-  let openTimer     = null;
-  let pendingMoveEnd = null; // moveend listener waiting to open popup
+  let stateCity      = -1;
+  let stateCardOpen  = false;
+  let openTimer      = null;
+  let pendingMoveEnd = null;
 
   function clearPending() {
     if (openTimer)      { clearTimeout(openTimer); openTimer = null; }
@@ -1366,7 +1385,7 @@ window.scrollTo(0, 0);
       const c = CITIES[cityIdx];
 
       clearPending();
-      map.closePopup();
+      hideCard();
       map.flyTo([c.lat, c.lng], 7, { duration: 0.85, animate: true });
 
       /* marker active states */
@@ -1404,28 +1423,27 @@ window.scrollTo(0, 0);
       }
     }
 
-    /* ---- open / close card ---- */
+    /* ---- show / hide card ---- */
     if (cityChanged || cardChanged) {
       stateCardOpen = shouldOpen;
       if (shouldOpen) {
         clearPending();
         if (cityChanged) {
-          /* open popup only after the fly animation actually finishes */
+          /* wait for fly to finish, then show centered card */
           pendingMoveEnd = function onMoveEnd() {
             pendingMoveEnd = null;
-            if (stateCity === cityIdx && stateCardOpen) markerRefs[cityIdx].openPopup();
+            if (stateCity === cityIdx && stateCardOpen) showCard(cityIdx);
           };
           map.once('moveend', pendingMoveEnd);
         } else {
-          /* city unchanged, re-open immediately (e.g. user scrolled back) */
           openTimer = setTimeout(() => {
-            if (stateCity === cityIdx && stateCardOpen) markerRefs[cityIdx].openPopup();
+            if (stateCity === cityIdx && stateCardOpen) showCard(cityIdx);
             openTimer = null;
           }, 60);
         }
       } else {
         clearPending();
-        map.closePopup();
+        hideCard();
       }
     }
   }
