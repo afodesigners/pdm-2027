@@ -1229,13 +1229,13 @@ window.scrollTo(0, 0);
   if (typeof L === 'undefined' || !document.getElementById('rm-map')) return;
 
   const CITIES = [
-    { id:'miami',     name:'Miami',     cat:'Americas',    region:'Florida, USA',            coords:'25.7617° N, 80.1918° W', lat:25.7617,  lng:-80.1918, img:'assets/img/p-celebrate.webp' },
+    { id:'montreal',  name:'Montreal',  cat:'Americas',    region:'Quebec, Canada',           coords:'45.5017° N, 73.5673° W', lat:45.5017,  lng:-73.5673, img:'assets/img/p-celebrate.webp' },
     { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/ph-h-pitwall.webp' },
     { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/p-cockpit-monaco.webp' },
     { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/ph-h-race-start.webp' },
     { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/ph-h-battle.webp' },
     { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/p-car-dusk.jpg' },
-    { id:'tokyo',     name:'Tokyo',     cat:'Asia',        region:'Japan',                    coords:'35.6762° N, 139.6503° E',lat:35.6762,  lng:139.6503, img:'assets/img/ph-h-formation.webp' },
+    { id:'macau',     name:'Macau',     cat:'Asia',        region:'Macau SAR, China',         coords:'22.1987° N, 113.5439° E',lat:22.1987,  lng:113.5439, img:'assets/img/ph-h-formation.webp' },
     { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/ph-h-podium.webp' },
   ];
 
