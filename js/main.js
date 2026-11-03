@@ -809,26 +809,26 @@ window.scrollTo(0, 0);
         // Alternating H(landscape,span-2) + V(portrait,span-1) layout
         // sequence creates editorial rhythm: [H V] [V H] [H V] [V H] …
         const SRCS = [
-          { src:'assets/img/ph-h-pitwall.jpg',     alt:'Pit wall action during race weekend',           h:true  },
+          { src:'assets/img/ph-h-pitwall.webp',     alt:'Pit wall action during race weekend',           h:true  },
           { src:'assets/img/p-car-track.jpg',       alt:'Formula car cornering at circuit',               h:false },
           { src:'assets/img/p-cockpit-dark.jpg',    alt:'Driver in cockpit, dramatic low-key lighting',   h:false },
-          { src:'assets/img/ph-h-paddock.jpg',      alt:'Paddock life and team atmosphere',               h:true  },
-          { src:'assets/img/ph-h-garage.jpg',       alt:'Team in garage, pre-race preparation',           h:true  },
+          { src:'assets/img/ph-h-paddock.webp',      alt:'Paddock life and team atmosphere',               h:true  },
+          { src:'assets/img/ph-h-garage.webp',       alt:'Team in garage, pre-race preparation',           h:true  },
           { src:'assets/img/p-race-duel.jpg',       alt:'Two Formula cars racing side by side',           h:false },
           { src:'assets/img/p-cockpit-orange.jpg',  alt:'Driver in orange Formula car cockpit',           h:false },
-          { src:'assets/img/ph-h-team-work.jpg',    alt:'Team working together during race weekend',      h:true  },
-          { src:'assets/img/ph-h-cockpit-prep.jpg', alt:'Cockpit preparation and driver helmet fitting',  h:true  },
+          { src:'assets/img/ph-h-team-work.webp',    alt:'Team working together during race weekend',      h:true  },
+          { src:'assets/img/ph-h-cockpit-prep.webp', alt:'Cockpit preparation and driver helmet fitting',  h:true  },
           { src:'assets/img/p-car-overhead.jpg',    alt:'Formula car viewed from above in pit lane',      h:false },
           { src:'assets/img/p-car-dusk.jpg',        alt:'Formula car rear view at golden hour',           h:false },
-          { src:'assets/img/ph-h-formation.jpg',    alt:'Cars lined up on the grid formation lap',        h:true  },
-          { src:'assets/img/ph-h-race-start.jpg',   alt:'Race start moment — cars off the line',          h:true  },
+          { src:'assets/img/ph-h-formation.webp',    alt:'Cars lined up on the grid formation lap',        h:true  },
+          { src:'assets/img/ph-h-race-start.webp',   alt:'Race start moment — cars off the line',          h:true  },
           { src:'assets/img/p-driver-red.jpg',      alt:'Driver in red race suit, paddock portrait',      h:false },
           { src:'assets/img/p-car-rear.jpg',        alt:'Formula car rear at circuit with grandstands',   h:false },
-          { src:'assets/img/ph-h-battle.jpg',       alt:'Side by side battle through the corner',         h:true  },
+          { src:'assets/img/ph-h-battle.webp',       alt:'Side by side battle through the corner',         h:true  },
           { src:'assets/img/ph-h-celebration.jpg',  alt:'Team and driver celebrating after the race',     h:true  },
           { src:'assets/img/p-car-var.jpg',         alt:'Formula car exiting pit lane',                   h:false },
           { src:'assets/img/p-team-media.jpg',      alt:'PDM media team photographing in the paddock',    h:false },
-          { src:'assets/img/ph-h-podium.jpg',       alt:'Podium moment, trophy in hand',                  h:true  },
+          { src:'assets/img/ph-h-podium.webp',       alt:'Podium moment, trophy in hand',                  h:true  },
           { src:'assets/img/p-car-display.jpg',     alt:'Formula car on display in paddock hospitality',  h:false },
           { src:'assets/img/p-mechanic.jpg',        alt:'Mechanic working on Formula car at pit wall',    h:false },
         ];
@@ -1229,14 +1229,14 @@ window.scrollTo(0, 0);
   if (typeof L === 'undefined' || !document.getElementById('rm-map')) return;
 
   const CITIES = [
-    { id:'miami',     name:'Miami',     cat:'Americas',    region:'Florida, USA',            coords:'25.7617° N, 80.1918° W', lat:25.7617,  lng:-80.1918, img:'assets/img/p-celebrate.jpg' },
-    { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/ph-h-pitwall.jpg' },
-    { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/p-cockpit-monaco.jpg' },
-    { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/ph-h-race-start.jpg' },
-    { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/ph-h-battle.jpg' },
+    { id:'miami',     name:'Miami',     cat:'Americas',    region:'Florida, USA',            coords:'25.7617° N, 80.1918° W', lat:25.7617,  lng:-80.1918, img:'assets/img/p-celebrate.webp' },
+    { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/ph-h-pitwall.webp' },
+    { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/p-cockpit-monaco.webp' },
+    { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/ph-h-race-start.webp' },
+    { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/ph-h-battle.webp' },
     { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/p-car-dusk.jpg' },
-    { id:'tokyo',     name:'Tokyo',     cat:'Asia',        region:'Japan',                    coords:'35.6762° N, 139.6503° E',lat:35.6762,  lng:139.6503, img:'assets/img/ph-h-formation.jpg' },
-    { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/ph-h-podium.jpg' },
+    { id:'tokyo',     name:'Tokyo',     cat:'Asia',        region:'Japan',                    coords:'35.6762° N, 139.6503° E',lat:35.6762,  lng:139.6503, img:'assets/img/ph-h-formation.webp' },
+    { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/ph-h-podium.webp' },
   ];
 
   /* ---- init map ---- */
