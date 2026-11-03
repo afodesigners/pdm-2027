@@ -1256,6 +1256,29 @@ window.scrollTo(0, 0);
 
   L.control.zoom({ position: 'topright' }).addTo(map);
 
+  /* ---- mobile city stack (vertical scroll, no map) ---- */
+  const stackEl = document.getElementById('rm-city-stack');
+  if (stackEl) {
+    CITIES.forEach((c, i) => {
+      const card = document.createElement('div');
+      card.className = 'rm-city-card';
+      card.innerHTML = `
+        <div class="rm-city-card__photo">
+          <img src="${c.img}" alt="${c.name}" loading="lazy" decoding="async">
+          <span class="rm-city-card__num">${String(i + 1).padStart(2, '0')}</span>
+        </div>
+        <div class="rm-city-card__body">
+          <div class="rm-city-card__row">
+            <p class="rm-city-card__name">${c.name}</p>
+            <span class="rm-city-card__cat">${c.cat}</span>
+          </div>
+          <p class="rm-city-card__region">${c.region}</p>
+          <p class="rm-city-card__coords">${c.coords}</p>
+        </div>`;
+      stackEl.appendChild(card);
+    });
+  }
+
   /* ---- ghost route (full overview) ---- */
   const routeCoords = CITIES.map(c => [c.lat, c.lng]);
   const routeLine = L.polyline(routeCoords, {
@@ -1448,31 +1471,33 @@ window.scrollTo(0, 0);
     }
   }
 
-  /* each city = 100% of viewport scroll; first 65% → card open, last 35% → card closed */
-  ScrollTrigger.create({
-    trigger: '#route-map',
-    start: 'top top',
-    end: '+=800%',   /* 8 cities × 100svh each */
-    pin: true,
-    onUpdate(self) {
-      const raw   = self.progress * 8;
-      const city  = Math.min(Math.floor(raw), 7);
-      const local = raw - city;            /* 0–1 within this city's scroll range */
-      handleMapState(city, local < 0.65);  /* open for first 65%, close for last 35% */
-    },
-    onLeaveBack() {
-      clearPending();
-      map.closePopup();
-      stateCity     = -1;
-      stateCardOpen = false;
-      if (hudEl) gsap.to(hudEl, { opacity: 0, duration: 0.3 });
-      markerRefs.forEach(m => {
-        const el = m.getElement();
-        if (!el) return;
-        el.querySelector('.rm-num-marker, .rm-photo-marker')?.classList.remove('is-active');
-      });
-      segments.forEach((seg, i) => { segStates[i].opacity = 0; seg.setStyle({ opacity: 0 }); });
-      map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
-    }
-  });
+  /* desktop only — GSAP pin + scroll tour */
+  if (window.matchMedia('(min-width: 769px)').matches) {
+    ScrollTrigger.create({
+      trigger: '#route-map',
+      start: 'top top',
+      end: '+=800%',   /* 8 cities × 100svh each */
+      pin: true,
+      onUpdate(self) {
+        const raw   = self.progress * 8;
+        const city  = Math.min(Math.floor(raw), 7);
+        const local = raw - city;
+        handleMapState(city, local < 0.65);
+      },
+      onLeaveBack() {
+        clearPending();
+        hideCard();
+        stateCity     = -1;
+        stateCardOpen = false;
+        if (hudEl) gsap.to(hudEl, { opacity: 0, duration: 0.3 });
+        markerRefs.forEach(m => {
+          const el = m.getElement();
+          if (!el) return;
+          el.querySelector('.rm-num-marker, .rm-photo-marker')?.classList.remove('is-active');
+        });
+        segments.forEach((seg, i) => { segStates[i].opacity = 0; seg.setStyle({ opacity: 0 }); });
+        map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
+      }
+    });
+  }
 }());
