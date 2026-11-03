@@ -1476,7 +1476,7 @@ window.scrollTo(0, 0);
     ScrollTrigger.create({
       trigger: '#route-map',
       start: 'top top',
-      end: '+=800%',   /* 8 cities × 100svh each */
+      end: '+=2400%',  /* 8 cities × 300svh each — slow enough to absorb each stop */
       pin: true,
       onUpdate(self) {
         const raw   = self.progress * 8;
