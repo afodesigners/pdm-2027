@@ -675,6 +675,19 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
   .rm-city-stack{display:flex;flex-direction:column}
 }
 
+/* Section mark: the two PDM lines, top-left of every section except hero, banner and footer. Decorative, so CSS only. Shape traced from the brand PNG; colour follows --cyan. */
+:root{--mark-w:36px;--mark:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 535 384'%3E%3Cpath d='M181 0h147L147 384H0zM388 0h147L354 384H207z'/%3E%3C/svg%3E")}
+#about::before,#team::before,#media::before,#videography::before,#ambassadors::before,#kit::before,#contact::before,#always::before,#route-map::before,.reel__frame::before{content:"";position:absolute;z-index:5;left:max(var(--gut),calc(50% - 800px + var(--gut)));top:clamp(24px,3vw,40px);width:var(--mark-w);aspect-ratio:535/384;background:var(--cyan);-webkit-mask:var(--mark) center/contain no-repeat;mask:var(--mark) center/contain no-repeat;pointer-events:none}
+.always{position:relative}
+.reel__frame{position:relative}
+/* full-bleed sections align to the header logo, and the pinned ones clear the fixed header */
+#always::before{left:var(--gut)}
+#route-map::before,.reel__frame::before{left:var(--gut);top:calc(var(--head) + 28px)}
+@media (max-width:820px){:root{--mark-w:28px}}
+/* route map: the stop readout sits under the mark on desktop; on mobile the mark sits under the first city's number badge */
+.rm-hud{top:calc(var(--head) + 70px)}
+@media (max-width:768px){#route-map::before{left:14px;top:54px}}
+
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *{animation:none!important}
