@@ -1163,13 +1163,9 @@ window.scrollTo(0, 0);
       });
     },
 
-    /* CONTACT — chips, validation, submit feedback. Replace the fake send with your endpoint / form plugin. */
+    /* CONTACT — validation, submit feedback. Replace the fake send with your endpoint / form plugin. */
     contact() {
       const form = $('#form'), msg = $('#formMsg');
-      // buttons in "Programmes" pre-select the matching chip
-      $$('[data-pick]').forEach((b) => b.addEventListener('click', () => {
-        const r = $(`input[name="interest"][value="${b.dataset.pick}"]`, form); if (r) r.checked = true;
-      }));
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         let ok = true;
