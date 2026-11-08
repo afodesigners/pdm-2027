@@ -529,17 +529,14 @@ window.scrollTo(0, 0);
       gsap.set(words, { yPercent: 115 });
       gsap.set(cards, { yPercent: 28, autoAlpha: 0, clipPath: 'inset(100% 0 0 0)' });
       gsap.set($$('[data-hero-fade]'), { autoAlpha: 0, y: 24 });
-      gsap.set($$('.hero__eyebrow,.hero__scroll,.hero__cap'), { autoAlpha: 0 });
       gsap.set($$('.mq'), { autoAlpha: 0 });
 
       const tl = gsap.timeline({ defaults: { ease: CFG.ease }, paused: true });
       state.heroIn = tl;
       tl.to($$('.mq'), { autoAlpha: 1, duration: 1.4, stagger: 0.2 }, 0)
-        .to($$('.hero__eyebrow'), { autoAlpha: 1, duration: 0.8 }, 0.2)
         .to(cards, { yPercent: 0, autoAlpha: 1, clipPath: 'inset(0% 0 0 0)', duration: 1.5, stagger: 0.1 }, 0.25)
         .to(words, { yPercent: 0, duration: 1.3, stagger: 0.08 }, 0.7)
-        .to($$('[data-hero-fade]'), { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 1.1)
-        .to($$('.hero__scroll,.hero__cap'), { autoAlpha: 1, duration: 0.8 }, 1.4);
+        .to($$('[data-hero-fade]'), { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 1.1);
 
       // marquees
       const mq = initMarquees('.hero .mq__in');

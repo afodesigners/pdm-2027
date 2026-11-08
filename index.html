@@ -8,13 +8,10 @@
 <title>PDM Motorsport / Media 2027</title>
 <meta name="description" content="A limited roster. A more complete approach. PDM looks after every side of a driver's media for the 2027 season.">
 
-<!-- If GSAP fails to load, the page stays fully readable: the "js" class is removed on window load -->
-<script>
-  document.documentElement.classList.add('js');
-  window.addEventListener('load', function () {
-    if (!window.gsap || !window.ScrollTrigger) document.documentElement.classList.remove('js');
-  });
-</script>
+<link rel="icon" type="image/png" href="assets/pdm-logo.png">
+
+<!-- Adds the "js" class early; removed on load if GSAP is missing (external file so CSP needs no inline hash) -->
+<script src="js/boot.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
