@@ -1222,15 +1222,18 @@ window.scrollTo(0, 0);
   if (typeof L === 'undefined' || !document.getElementById('rm-map')) return;
 
   const CITIES = [
-    { id:'montreal',  name:'Montreal',  cat:'Americas',    region:'Quebec, Canada',           coords:'45.5017° N, 73.5673° W', lat:45.5017,  lng:-73.5673, img:'assets/img/p-celebrate.webp' },
-    { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/ph-h-pitwall.webp' },
-    { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/p-cockpit-monaco.webp' },
-    { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/ph-h-race-start.webp' },
+    { id:'montreal',  name:'Montreal',  cat:'Americas',    region:'Quebec, Canada',           coords:'45.5017° N, 73.5673° W', lat:45.5017,  lng:-73.5673, img:'assets/img/map-montreal.webp' },
+    { id:'london',    name:'London',    cat:'Europe',      region:'United Kingdom',           coords:'51.5074° N, 0.1278° W',  lat:51.5074,  lng:-0.1278,  img:'assets/img/map-london.webp' },
+    { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/map-monaco.webp' },
+    { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/map-monza.webp' },
     { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/ph-h-battle.webp' },
     { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/p-car-dusk.jpg' },
-    { id:'macau',     name:'Macau',     cat:'Asia',        region:'Macau SAR, China',         coords:'22.1987° N, 113.5439° E',lat:22.1987,  lng:113.5439, img:'assets/img/ph-h-formation.webp' },
-    { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/ph-h-podium.webp' },
+    { id:'macau',     name:'Macau',     cat:'Asia',        region:'Macau SAR, China',         coords:'22.1987° N, 113.5439° E',lat:22.1987,  lng:113.5439, img:'assets/img/map-macau.webp' },
+    { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/map-melbourne.webp' },
   ];
+
+  /* touch devices (iPad, phones): the map is scroll-driven, so it must never swallow a swipe */
+  const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
   /* ---- init map ---- */
   const map = L.map('rm-map', {
@@ -1238,16 +1241,21 @@ window.scrollTo(0, 0);
     zoom: 2,
     zoomControl: false,
     scrollWheelZoom: false,
+    dragging: !isTouch,
+    touchZoom: false,
+    doubleClickZoom: !isTouch,
     attributionControl: true
   });
 
   /* Esri dark gray canvas — free, no API key required in production */
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles &copy; Esri',
-    maxZoom: 16
+    maxZoom: 16,
+    updateWhenZooming: false, /* don't fetch tiles mid-flight: smoother flyTo, fewer requests */
+    keepBuffer: 4
   }).addTo(map);
 
-  L.control.zoom({ position: 'topright' }).addTo(map);
+  if (!isTouch) L.control.zoom({ position: 'topright' }).addTo(map);
 
   /* ---- mobile city stack (vertical scroll, no map) ---- */
   const stackEl = document.getElementById('rm-city-stack');
@@ -1280,7 +1288,9 @@ window.scrollTo(0, 0);
     opacity: 0.18
   }).addTo(map);
 
-  map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
+  /* extra bottom padding keeps the last stops clear of the footer fade */
+  const FIT = { paddingTopLeft: [70, 90], paddingBottomRight: [70, 220] };
+  map.fitBounds(routeLine.getBounds(), FIT);
 
   /* ---- popup card builder ---- */
   function cardHTML(c, stopNum) {
@@ -1464,33 +1474,51 @@ window.scrollTo(0, 0);
     }
   }
 
-  /* desktop only — GSAP pin + scroll tour */
-  if (window.matchMedia('(min-width: 769px)').matches) {
+  function resetTour() {
+    clearPending();
+    hideCard();
+    stateCity     = -1;
+    stateCardOpen = false;
+    if (hudEl) gsap.to(hudEl, { opacity: 0, duration: 0.3 });
+    markerRefs.forEach(m => {
+      const el = m.getElement();
+      if (!el) return;
+      el.querySelector('.rm-num-marker, .rm-photo-marker')?.classList.remove('is-active');
+    });
+    segments.forEach((seg, i) => { segStates[i].opacity = 0; seg.setStyle({ opacity: 0 }); });
+    map.fitBounds(routeLine.getBounds(), FIT);
+  }
+
+  /* map tour above 820px (same breakpoint as the rest of the site), city stack below.
+     gsap.matchMedia rebuilds/reverts it live, so rotating an iPad or resizing a window
+     never leaves the pinned tour running under the mobile layout (or vice versa). */
+  gsap.matchMedia().add('(min-width: 821px)', () => {
+    map.invalidateSize();   /* the map was display:none below 821px, so Leaflet's size is stale */
+    resetTour();
     ScrollTrigger.create({
       trigger: '#route-map',
       start: 'top top',
-      end: '+=2400%',  /* 8 cities × 300svh each — slow enough to absorb each stop */
+      /* 8 cities × 300svh on desktop; half that on touch so swiping through doesn't feel stuck */
+      end: isTouch ? '+=1200%' : '+=2400%',
       pin: true,
+      invalidateOnRefresh: true,
       onUpdate(self) {
         const raw   = self.progress * 8;
         const city  = Math.min(Math.floor(raw), 7);
         const local = raw - city;
         handleMapState(city, local < 0.65);
       },
-      onLeaveBack() {
-        clearPending();
-        hideCard();
-        stateCity     = -1;
-        stateCardOpen = false;
-        if (hudEl) gsap.to(hudEl, { opacity: 0, duration: 0.3 });
-        markerRefs.forEach(m => {
-          const el = m.getElement();
-          if (!el) return;
-          el.querySelector('.rm-num-marker, .rm-photo-marker')?.classList.remove('is-active');
-        });
-        segments.forEach((seg, i) => { segStates[i].opacity = 0; seg.setStyle({ opacity: 0 }); });
-        map.fitBounds(routeLine.getBounds(), { padding: [70, 70] });
-      }
+      onLeaveBack: resetTour
     });
-  }
+    return () => { clearPending(); hideCard(); stateCity = -1; stateCardOpen = false; };
+  });
+
+  /* rotation / resize within the desktop range (e.g. iPad portrait 834 → landscape 1194):
+     the breakpoint doesn't change, so resync Leaflet's size after ScrollTrigger re-lays out the pin */
+  ScrollTrigger.addEventListener('refresh', () => {
+    if (!document.getElementById('rm-map').offsetWidth) return;
+    map.invalidateSize({ pan: false });
+    if (stateCity >= 0) map.setView([CITIES[stateCity].lat, CITIES[stateCity].lng], 7, { animate: false });
+    else map.fitBounds(routeLine.getBounds(), FIT);
+  });
 }());
