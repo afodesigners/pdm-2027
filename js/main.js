@@ -1132,12 +1132,15 @@ window.scrollTo(0, 0);
           ease: 'none',
         });
 
+        // Pin the card row (not the whole section) once its bottom reaches the viewport bottom,
+        // so photo + name + achievements are always fully on screen while the track slides
+        const wrap = $('.amb__track-wrap', root);
         ScrollTrigger.create({
-          trigger: root,
+          trigger: wrap,
+          pin: wrap,
           animation: tween,
-          pin: true,
           scrub: 1,
-          start: 'top top',
+          start: () => (wrap.offsetHeight > window.innerHeight ? 'top top' : 'bottom bottom'),
           end: () => '+=' + travelDist(),
           invalidateOnRefresh: true,
         });
