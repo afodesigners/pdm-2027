@@ -1132,15 +1132,30 @@ window.scrollTo(0, 0);
           ease: 'none',
         });
 
-        // Pin the card row (not the whole section) once its bottom reaches the viewport bottom,
-        // so photo + name + achievements are always fully on screen while the track slides
+        // Size cards to the height left under the heading, so photo + series + name +
+        // achievements + IG are all on screen the moment the section pins (e.g. 13" MacBook Air)
         const wrap = $('.amb__track-wrap', root);
+        const fit = () => {
+          const wrapTop = wrap.getBoundingClientRect().top - root.getBoundingClientRect().top;
+          const padB = parseFloat(getComputedStyle(track).paddingBottom) || 0;
+          let w = Math.min(420, Math.max(240, window.innerWidth * 0.28));
+          for (let i = 0; i < 2; i++) { // info height depends on card width, so settle twice
+            root.style.setProperty('--amb-card-w', w + 'px');
+            const info = Math.max(...cards.map((c) => $('.amb__info', c).offsetHeight));
+            const photoH = window.innerHeight - wrapTop - padB - info;
+            w = Math.max(200, Math.min(420, window.innerWidth * 0.28, photoH * 0.75));
+          }
+          root.style.setProperty('--amb-card-w', w + 'px');
+        };
+        fit();
+        ScrollTrigger.addEventListener('refreshInit', fit);
+
         ScrollTrigger.create({
-          trigger: wrap,
-          pin: wrap,
+          trigger: root,
           animation: tween,
+          pin: true,
           scrub: 1,
-          start: () => (wrap.offsetHeight > window.innerHeight ? 'top top' : 'bottom bottom'),
+          start: 'top top',
           end: () => '+=' + travelDist(),
           invalidateOnRefresh: true,
         });
@@ -1151,6 +1166,11 @@ window.scrollTo(0, 0);
           trigger: root, start: 'top 80%', once: true,
           onEnter: () => gsap.to(cards, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.1, ease: CFG.ease }),
         });
+
+        return () => {
+          ScrollTrigger.removeEventListener('refreshInit', fit);
+          root.style.removeProperty('--amb-card-w');
+        };
       });
 
       mm.add('(max-width: 820px)', () => {
