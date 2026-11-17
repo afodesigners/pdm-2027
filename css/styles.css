@@ -520,12 +520,14 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
   .ag__l{grid-column:2 / 3;grid-row:2}
   .ag__thumb{display:block;grid-column:1 / -1;grid-row:3;width:100%;aspect-ratio:16/10;object-fit:cover}
   .ag__pv{display:none}
-  .statement__stage{min-height:0;display:block;padding-block:clamp(52px,10vw,100px)}
-  .statement__t{max-width:none;text-align:center;font-size:clamp(24px,6.4vw,84px)}
-  .st__img{display:none}
-  .st__img--r{float:none}
+  /* statement: text on top, the two photos side by side underneath (right one offset lower) */
+  .statement__stage{min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:clamp(48px,10vw,72px) clamp(14px,4vw,24px);align-items:start;padding-block:clamp(52px,10vw,100px)}
+  .statement__t{grid-column:1 / -1;order:-1;max-width:none;text-align:center;font-size:clamp(24px,6.4vw,84px)}
+  .st__img{position:relative;left:auto;right:auto;top:auto;width:min(100%,300px)}
+  .st__img--l{justify-self:end}
+  .st__img--r{justify-self:start;margin-top:clamp(40px,12vw,90px)}
   .vg__head{flex-direction:column;align-items:flex-start;gap:20px}
-  .vg__lead{max-width:none}
+  .vg__lead{max-width:none;align-self:flex-start}
   .vg__tabbar{display:flex;width:100%}
   .vg__tab{flex:1;text-align:center;padding:10px 10px;font-size:12px}
   .svc__grid--vid{grid-template-columns:repeat(2,1fr)}
@@ -670,6 +672,13 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
 .leaflet-control-attribution a{color:rgba(255,255,255,.5)!important}
 
 /* touch: let a swipe on the map scroll the page instead of panning the map */
+/* touch: bigger invisible tap areas on small text links (no visual change) */
+@media (hover:none),(pointer:coarse){
+  .amb__ig,.foot__nav a,.foot__bot a,.contact__email{position:relative}
+  .amb__ig::after{content:"";position:absolute;inset:-13px -6px}
+  .contact__email::after{content:"";position:absolute;inset:-10px -4px}
+  .foot__nav a::after,.foot__bot a::after{content:"";position:absolute;inset:-6px -4px}
+}
 @media (hover:none),(pointer:coarse){#rm-map,#rm-map .leaflet-container,#rm-map .leaflet-pane{touch-action:pan-y!important}}
 
 @media(max-width:820px){
