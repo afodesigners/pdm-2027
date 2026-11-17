@@ -1105,81 +1105,16 @@ window.scrollTo(0, 0);
       measure(); snapTo(0, true);
     },
 
-    /* AMBASSADORS — GSAP-pinned horizontal scroll (desktop); native overflow scroll (mobile) */
+    /* AMBASSADORS — simple grid (no pin / sideways scroll); cards fade up row by row as they enter */
     ambassadors() {
       const root = $('[data-section="ambassadors"]');
       if (!root) return;
-      const track = $('.amb__track', root);
       const cards = $$('.amb__card', root);
-
-      // click toggles colour-lock; same card again releases it
-      cards.forEach((card) => {
-        card.addEventListener('click', () => {
-          const wasActive = card.classList.contains('is-active');
-          cards.forEach((c) => c.classList.remove('is-active'));
-          if (!wasActive) card.classList.add('is-active');
-        });
-      });
-
-      const mm = gsap.matchMedia();
-
-      mm.add(CFG.desktop, () => {
-        // Pin the section; translate the track left as user scrolls down
-        const travelDist = () => track.scrollWidth - document.documentElement.clientWidth;
-
-        const tween = gsap.to(track, {
-          x: () => -travelDist(),
-          ease: 'none',
-        });
-
-        // Size cards to the height left under the heading, so photo + series + name +
-        // achievements + IG are all on screen the moment the section pins (e.g. 13" MacBook Air)
-        const wrap = $('.amb__track-wrap', root);
-        const fit = () => {
-          const wrapTop = wrap.getBoundingClientRect().top - root.getBoundingClientRect().top;
-          const padB = parseFloat(getComputedStyle(track).paddingBottom) || 0;
-          let w = Math.min(420, Math.max(240, window.innerWidth * 0.28));
-          for (let i = 0; i < 2; i++) { // info height depends on card width, so settle twice
-            root.style.setProperty('--amb-card-w', w + 'px');
-            const info = Math.max(...cards.map((c) => $('.amb__info', c).offsetHeight));
-            const photoH = window.innerHeight - wrapTop - padB - info;
-            w = Math.max(200, Math.min(420, window.innerWidth * 0.28, photoH * 0.75));
-          }
-          root.style.setProperty('--amb-card-w', w + 'px');
-        };
-        fit();
-        ScrollTrigger.addEventListener('refreshInit', fit);
-
-        ScrollTrigger.create({
-          trigger: root,
-          animation: tween,
-          pin: true,
-          scrub: 1,
-          start: 'top top',
-          end: () => '+=' + travelDist(),
-          invalidateOnRefresh: true,
-        });
-
-        // stagger cards in as section enters the viewport
-        gsap.set(cards, { autoAlpha: 0, y: 28 });
-        ScrollTrigger.create({
-          trigger: root, start: 'top 80%', once: true,
-          onEnter: () => gsap.to(cards, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.1, ease: CFG.ease }),
-        });
-
-        return () => {
-          ScrollTrigger.removeEventListener('refreshInit', fit);
-          root.style.removeProperty('--amb-card-w');
-        };
-      });
-
-      mm.add('(max-width: 820px)', () => {
-        // Mobile: native scroll, staggered reveal
-        gsap.set(cards, { autoAlpha: 0, y: 28 });
-        ScrollTrigger.create({
-          trigger: root, start: 'top 76%', once: true,
-          onEnter: () => gsap.to(cards, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1, ease: CFG.ease }),
-        });
+      gsap.set(cards, { autoAlpha: 0, y: 28 });
+      ScrollTrigger.batch(cards, {
+        start: 'top 88%',
+        once: true,
+        onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.1, ease: CFG.ease }),
       });
     },
 
@@ -1250,7 +1185,7 @@ window.scrollTo(0, 0);
     { id:'monaco',    name:'Monaco',    cat:'Europe',      region:'Principality of Monaco',   coords:'43.7384° N, 7.4246° E',  lat:43.7384,  lng:7.4246,   img:'assets/img/map-monaco.webp' },
     { id:'monza',     name:'Monza',     cat:'Europe',      region:'Italy',                    coords:'45.6156° N, 9.2811° E',  lat:45.6156,  lng:9.2811,   img:'assets/img/map-monza.webp' },
     { id:'barcelona', name:'Barcelona', cat:'Europe',      region:'Spain',                    coords:'41.3851° N, 2.1734° E',  lat:41.3851,  lng:2.1734,   img:'assets/img/map-barcelona.webp' },
-    { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/p-car-dusk.jpg' },
+    { id:'dubai',     name:'Dubai',     cat:'Middle East', region:'UAE',                      coords:'25.2048° N, 55.2708° E', lat:25.2048,  lng:55.2708,  img:'assets/img/map-dubai.webp' },
     { id:'macau',     name:'Macau',     cat:'Asia',        region:'Macau SAR, China',         coords:'22.1987° N, 113.5439° E',lat:22.1987,  lng:113.5439, img:'assets/img/map-macau.webp' },
     { id:'melbourne', name:'Melbourne', cat:'Oceania',     region:'Australia',                coords:'37.8136° S, 144.9631° E',lat:-37.8136, lng:144.9631, img:'assets/img/map-melbourne.webp' },
   ];
