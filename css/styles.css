@@ -470,10 +470,18 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
 @media(max-width:480px){.ph-grid{grid-template-columns:1fr}.ph-gi--h,.ph-gi--v{grid-column:span 1;aspect-ratio:4/3}}
 
 /* === AMBASSADORS === */
-/* drivers: plain grid, always in colour — 3 cols desktop, 2 tablet (≤820px), 1 phone (≤520px) */
-.amb__track-wrap{margin-top:clamp(32px,4vw,56px)}
-.amb__track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(32px,3vw,48px) clamp(16px,2vw,28px);padding:0 var(--gut);max-width:1600px;margin:0 auto;list-style:none}
-.amb__card{position:relative}
+/* drivers: one row, always in colour — pinned sideways scroll on desktop, swipe on ≤820px */
+.amb__track-wrap{overflow:hidden;margin-top:clamp(24px,3vw,40px)}
+.amb__track{display:flex;gap:clamp(14px,1.8vw,24px);padding:0 var(--gut) clamp(28px,4vw,48px);list-style:none;will-change:transform}
+.amb__card{flex:0 0 clamp(240px,28vw,420px);position:relative}
+/* desktop: tighter top spacing; card width set by JS (--amb-card-w) so the whole card fits the viewport when pinned */
+@media(min-width:821px){
+  #ambassadors{padding-top:clamp(72px,6vw,92px)}
+  #ambassadors .split--head{margin-top:clamp(12px,1.4vw,24px)}
+  .amb__track-wrap{margin-top:clamp(18px,2vw,28px)}
+  .amb__track{padding-bottom:clamp(20px,2.4vw,32px)}
+  .amb__card{flex-basis:var(--amb-card-w,clamp(240px,28vw,420px))}
+}
 .amb__fig{aspect-ratio:3/4;overflow:hidden;background:var(--ink-2);position:relative}
 .amb__fig img{width:100%;height:100%;object-fit:cover;object-position:top center;transition:transform 1.2s cubic-bezier(.16,1,.3,1);pointer-events:none}
 .amb__card:hover .amb__fig img{transform:scale(1.04)}
@@ -533,7 +541,9 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
   .svc__grid--vid{grid-template-columns:repeat(2,1fr)}
   .svc__grid--photo{grid-template-columns:repeat(2,1fr)}
   .svc__grid--gfx{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .amb__track{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .amb__track{overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory;cursor:grab;user-select:none}
+  .amb__track::-webkit-scrollbar{display:none}
+  .amb__card{flex:0 0 min(72vw,300px);scroll-snap-align:start}
   .banner__stage{grid-template-columns:1fr;clip-path:none}
   .banner__p--r{display:none}
   .banner__txt{bottom:clamp(80px,14vh,140px)}
@@ -566,7 +576,6 @@ body.lb-open{overflow:hidden;touch-action:none;overscroll-behavior:none}
   .banner__tl,.banner__br{font-size:11px}
 }
 @media (max-width:520px){
-  .amb__track{grid-template-columns:1fr}
   .loader__n{font-size:clamp(52px,16vw,200px)}
   .loader__l{font-size:10px}
   /* drawer: very small screens */
