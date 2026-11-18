@@ -388,9 +388,6 @@ body.vg-modal-open{overflow:hidden}
 .svc__grid--photo .svc__item:nth-child(3n+1) .svc__thumb{aspect-ratio:3/4}
 
 /* graphics — 3 columns per category */
-.svc__cats{display:flex;flex-direction:column;gap:48px}
-.svc__cat-grp{}
-.svc__cat-lbl{display:block;margin-bottom:16px;color:rgba(9,11,13,.4);letter-spacing:.12em}
 .svc__grid--gfx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,1.6vw,24px)}
 .svc__grid--gfx .svc__item{border-radius:0;cursor:zoom-in}
 .svc__grid--gfx .svc__thumb{aspect-ratio:4/5;border-radius:0}
