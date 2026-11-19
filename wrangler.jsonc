@@ -1,0 +1,9 @@
+// Cloudflare Workers config: serves this repo as a static site.
+// Security headers live in _headers (mirror of vercel.json).
+{
+  "name": "pdm-2027",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "."
+  }
+}

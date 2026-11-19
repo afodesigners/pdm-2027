@@ -1,0 +1,14 @@
+# Files Cloudflare should NOT publish (not part of the website)
+.git
+.claude
+.DS_Store
+**/.DS_Store
+memory
+tools
+README.md
+screenshot.png
+vercel.json
+wrangler.jsonc
+.assetsignore
+# Source photos (some >25 MiB, Cloudflare's per-file limit); the site uses the compressed copies
+assets/img/originals
