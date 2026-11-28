@@ -1174,10 +1174,11 @@ window.scrollTo(0, 0);
       });
     },
 
-    /* CONTACT — validation, submit feedback. Replace the fake send with your endpoint / form plugin. */
+    /* CONTACT — validation, submit feedback. POSTs to the Worker at /api/contact (emails via Resend). */
     contact() {
-      const form = $('#form'), msg = $('#formMsg');
-      form.addEventListener('submit', (e) => {
+      const form = $('#form'), msg = $('#formMsg'), btn = $('button[type="submit"]', form);
+      let sending = false;
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         let ok = true;
         $$('#f-name,#f-email', form).forEach((i) => {
@@ -1188,9 +1189,24 @@ window.scrollTo(0, 0);
           msg.style.color = '#ff5d73'; msg.textContent = 'Please add your name and a valid email.';
           gsap.fromTo(form, { x: -8 }, { x: 0, duration: 0.6, ease: 'elastic.out(1,.3)' }); return;
         }
-        msg.style.color = ''; msg.textContent = 'Thanks. We’ll be in touch about your season.';
-        gsap.fromTo(msg, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.6 });
-        // TODO: send FormData(form) to your backend / WordPress form handler here
+        if (sending) return;
+        sending = true; btn.disabled = true;
+        msg.style.color = ''; msg.textContent = 'Sending…';
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(new FormData(form))),
+          });
+          if (!res.ok || !(await res.json()).ok) throw new Error('send failed');
+          msg.textContent = 'Thanks. We’ll be in touch about your season.';
+          form.reset();
+        } catch {
+          msg.style.color = '#ff5d73';
+          msg.textContent = 'Sorry, that didn’t send. Please email hello@pdmmotorsport.com.';
+        } finally {
+          gsap.fromTo(msg, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.6 });
+          sending = false; btn.disabled = false;
+        }
       });
     },
 

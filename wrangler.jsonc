@@ -1,9 +1,19 @@
 // Cloudflare Workers config: serves this repo as a static site.
+// The Worker (worker/index.js) handles POST /api/contact and emails it via Resend.
+// Set the RESEND_API_KEY secret: dashboard -> Settings -> Variables and Secrets,
+// or `npx wrangler secret put RESEND_API_KEY`.
 // Security headers live in _headers (mirror of vercel.json).
 {
   "name": "pdm-2027",
+  "main": "worker/index.js",
   "compatibility_date": "2026-11-01",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "vars": {
+    "CONTACT_TO": "hello@pdmmotorsport.com",
+    "CONTACT_FROM": "PDM 2027 Website <website@pdmedia.co.uk>"
   }
 }

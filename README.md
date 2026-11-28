@@ -52,7 +52,7 @@ Add one entry to the `REVEALS` object in main.js, then use `data-reveal="yournam
 - Desktop-only effects are gated with `gsap.matchMedia`.
 
 ## TODOs before launch
-- **Form**: `SECTIONS.contact` fakes the submit (search `TODO`). Connect to Elementor Forms / your endpoint.
+- **Contact form**: `worker/index.js` handles `POST /api/contact` and emails via Resend. Needs the secret `RESEND_API_KEY` and a verified sending domain `pdmedia.co.uk` in Resend; recipient/sender are the `vars` in `wrangler.jsonc`.
 - **Images**: current photos are low-res crops from the Figma file. Replace the files in `assets/img/` with originals, keeping the filenames.
 - **Hero captions** for cards 3 and 5 ("The lap / On track", "The podium / Team moment") are placeholders, not Figma copy.
 - Self-host the fonts (Anton, Inter, JetBrains Mono) if you need to avoid Google Fonts.

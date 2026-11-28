@@ -12,3 +12,8 @@ wrangler.jsonc
 .assetsignore
 # Source photos (some >25 MiB, Cloudflare's per-file limit); the site uses the compressed copies
 assets/img/originals
+worker
+.wrangler
+.dev.vars
+node_modules
+.gitignore

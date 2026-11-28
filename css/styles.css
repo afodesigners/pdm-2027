@@ -309,6 +309,7 @@ html.lenis,html.lenis body{height:auto}
 .fld.err input{border-color:#ff5d73}
 .form .btn{margin-top:4px}
 .form__msg{margin-top:14px;color:var(--cyan);min-height:1.5em}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 
 /* ---------- footer ---------- */
 .foot{background:var(--ink);border-top:1px solid var(--cyan);padding-top:clamp(40px,5vw,72px)}
