@@ -1202,7 +1202,7 @@ window.scrollTo(0, 0);
           form.reset();
         } catch {
           msg.style.color = '#ff5d73';
-          msg.textContent = 'Sorry, that didn’t send. Please email hello@pdmmotorsport.com.';
+          msg.textContent = 'Sorry, that didn’t send. Please email info@pdmedia.co.uk.';
         } finally {
           gsap.fromTo(msg, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.6 });
           sending = false; btn.disabled = false;

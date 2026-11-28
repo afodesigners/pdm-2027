@@ -13,7 +13,7 @@
     "run_worker_first": ["/api/*"]
   },
   "vars": {
-    "CONTACT_TO": "hello@pdmmotorsport.com",
+    "CONTACT_TO": "info@pdmedia.co.uk",
     "CONTACT_FROM": "PDM 2027 Website <website@pdmedia.co.uk>"
   }
 }
